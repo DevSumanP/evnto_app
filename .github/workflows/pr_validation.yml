@@ -40,8 +40,14 @@ jobs:
       # bootstrap.dart loads .env at runtime. Static analysis doesn't need it,
       # but widget tests that boot the app would. Use the tracked template so we
       # never need real secrets for validation.
+      # pubspec declares .env.development/.staging/.production as assets; all
+      # three must exist or the analyzer flags asset_does_not_exist. They're
+      # gitignored, so seed each from the tracked template.
       - name: Provide placeholder env
-        run: cp .env.example .env.development
+        run: |
+          cp .env.example .env.development
+          cp .env.example .env.staging
+          cp .env.example .env.production
 
       - name: Verify formatting
         run: dart format --output=none --set-exit-if-changed . 
