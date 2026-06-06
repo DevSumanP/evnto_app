@@ -11,3 +11,7 @@ GeneratedPluginRegistrant.java
 key.properties
 **/*.keystore
 **/*.jks
+
+# CI-materialized service accounts (written by scripts/ci_materialize_secrets.sh).
+fastlane-play-service-account.json
+firebase-service-account.json

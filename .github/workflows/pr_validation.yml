@@ -1,0 +1,58 @@
+name: PR Validation
+
+# Gate every PR that targets a long-lived branch.
+on:
+  pull_request:
+    branches: [dev, staging, main]
+
+# A newer push to the same PR cancels the in-flight run.
+concurrency:
+  group: pr-validation-${{ github.ref }}
+  cancel-in-progress: true
+
+env:
+  # Keep in sync with your local `flutter --version`. Must bundle Dart >= 3.9.2.
+  FLUTTER_VERSION: "3.35.5"
+
+jobs:
+  analyze:
+    name: Analyze & Test
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      
+      - name: Set up Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          flutter-version: ${{ env.FLUTTER_VERSION }}
+          channel: stable
+          cache: true
+
+      - name: Install dependencies
+        run: flutter pub get 
+
+      # freezed / injectable / auto_route / json_serializable outputs are
+      # gitignored, so analyze fails without this.
+      - name: Run code generation
+        run: dart run build_runner build --delete-conflicting-outputs
+
+      # bootstrap.dart loads .env at runtime. Static analysis doesn't need it,
+      # but widget tests that boot the app would. Use the tracked template so we
+      # never need real secrets for validation.
+      - name: Provide placeholder env
+        run: cp .env.example .env.development
+
+      - name: Verify formatting
+        run: dart format --output=none --set-exit-if-changed . 
+      
+      - name: Analyze 
+        run: flutter analyze
+
+      - name: Run tests
+        run: |
+          if [ -d test ] && find test -name '*_test.dart' | grep -q .; then
+            flutter test
+          else
+            echo "No test files found — skipping."
+          fi
