@@ -1,0 +1,128 @@
+name: tap_app
+description: Tap — share contact cards by bringing phones together. Uses NFC on Android, BLE proximity on iOS, and a QR code fallback.
+publish_to: "none"
+
+version: 1.0.0+1
+
+environment:
+  sdk: ^3.9.2
+
+dependencies:
+  flutter:
+    sdk: flutter
+  flutter_localizations:
+    sdk: flutter
+
+  cupertino_icons: ^1.0.8
+
+  # State management
+  flutter_bloc: ^9.1.1
+  bloc: ^9.0.0
+
+  # Dependency injection
+  get_it: ^8.0.3
+  injectable: ^2.5.0
+
+  # Routing
+  auto_route: ^10.1.0
+
+  # Networking (kept from scaffold)
+  dio: ^5.7.0
+  connectivity_plus: ^6.1.0
+  internet_connection_checker_plus: ^2.5.2
+
+  # Environment configuration
+  flutter_dotenv: ^5.2.1
+
+  # Analytics
+  posthog_flutter: ^4.10.0
+
+  # UI
+  google_fonts: ^6.2.1
+  flutter_svg: ^2.0.16
+  syncfusion_flutter_pdfviewer: ^28.2.6
+
+  # Functional / value types
+  dartz: ^0.10.1
+  equatable: ^2.0.7
+  collection: ^1.19.0
+
+  # Serialization (annotations)
+  freezed_annotation: ^3.1.0
+  json_annotation: ^4.9.0
+
+  # Storage
+  shared_preferences: ^2.3.5
+  path_provider: ^2.1.4
+
+  # Localization / formatting
+  intl: ^0.20.2
+
+  # ── Tap (contact sharing) ────────────────────────────────────────────────
+  # Transports
+  flutter_nfc_kit: ^3.5.2          # NFC on Android (and limited iOS read)
+  ndef: ^0.3.3                      # NDEF record encoding for NFC
+  nearby_connections: ^4.2.0        # BLE/WiFi proximity (Android + iOS)
+  qr_flutter: ^4.1.0                # generate QR codes
+  mobile_scanner: ^5.2.3            # scan QR codes (no shutter)
+
+  # Checkout / Khalti payment
+  flutter_inappwebview: ^6.1.5      # hosts Khalti payment page
+
+  # Device integration
+  flutter_contacts: ^1.1.9          # save contacts to the OS contact book
+  image_picker: ^1.1.2              # pick a profile photo
+  permission_handler: ^11.3.1       # request NFC/BLE/camera/contacts perms
+  share_plus: ^10.0.2               # share the QR as an image
+  gal: ^2.3.0                       # save the QR to the camera roll
+  uuid: ^4.5.1                      # ids for history entries
+
+  # ── Location ──────────────────────────────────────────────────────────────
+  geolocator: ^13.0.2               # GPS coordinates for "use my location"
+  geocoding: ^3.0.0                 # reverse-geocode coords to city/country
+  barcode_widget: ^2.0.4
+
+  # ── Map (OpenStreetMap via flutter_map) ──────────────────────────────
+  flutter_map: ^8.1.1
+  latlong2: ^0.9.1
+
+  # ── Map (Google Maps) ────────────────────────────────────────────────
+  google_maps_flutter: ^2.10.0
+
+  # ── Bloc stream helpers (debounce/switchMap for search) ──────────────
+  stream_transform: ^2.1.1
+  
+  # ── Push notifications ───────────────────────────────────────────────────
+  firebase_core: ^3.6.0
+  firebase_messaging: ^15.1.3
+  flutter_local_notifications: ^17.2.3
+  cached_network_image: ^3.4.1
+  screen_brightness: ^2.1.9
+  wakelock_plus: ^1.4.0
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+
+  flutter_lints: ^5.0.0
+
+  # Code generation
+  build_runner: ^2.4.13
+  freezed: ^3.2.0
+  json_serializable: ^6.9.5
+  injectable_generator: ^2.6.2
+  auto_route_generator: ^10.2.4
+
+  # App icons
+  flutter_launcher_icons: ^0.14.3
+
+flutter:
+  uses-material-design: true
+  generate: true
+
+  assets:
+    - .env.development
+    - .env.staging
+    - .env.production
+    - assets/images/
+    - assets/icons/

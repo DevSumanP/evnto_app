@@ -1,0 +1,24 @@
+# Normalize line endings across platforms.
+# Repo stores LF; Windows checkouts get CRLF for normal text files.
+* text=auto
+
+# Shell scripts must stay LF or they break on Linux CI runners
+# ("bad interpreter" / "\r command not found").
+*.sh    text eol=lf
+gradlew text eol=lf
+
+# Windows batch files must stay CRLF.
+*.bat   text eol=crlf
+
+# Binary assets — never normalize or diff.
+*.png   binary
+*.jpg   binary
+*.jpeg  binary
+*.webp  binary
+*.gif   binary
+*.ico   binary
+*.ttf   binary
+*.otf   binary
+*.jks   binary
+*.keystore binary
+*.pdf   binary

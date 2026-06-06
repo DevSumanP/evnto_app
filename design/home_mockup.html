@@ -1,0 +1,419 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Tap — Home redesign mockup</title>
+<style>
+  :root{
+    --orange:#FF8551;
+    --orange-soft:#FFE5DA;
+    --orange-50:#FFF4EF;
+    --text500:#1F2430;
+    --text300:#8A909C;
+    --text10:#F6F7F9;
+    --white:#ffffff;
+    --green:#1FA971;
+    --red:#E5484D;
+    --shadow:0 4px 12px rgba(0,0,0,.08);
+  }
+  *{box-sizing:border-box;margin:0;padding:0;-webkit-font-smoothing:antialiased;}
+  body{
+    font-family:'Segoe UI',system-ui,-apple-system,sans-serif;
+    background:#2c2f36;
+    display:flex;flex-direction:column;align-items:center;
+    padding:24px 12px 60px;color:var(--text500);
+  }
+  .pagehead{color:#cfd3da;text-align:center;margin-bottom:18px;max-width:760px;}
+  .pagehead h1{font-size:18px;font-weight:700;color:#fff;}
+  .pagehead p{font-size:13px;margin-top:6px;line-height:1.5;}
+
+  /* toggle */
+  .toggle{display:inline-flex;background:#3a3e47;border-radius:999px;padding:4px;margin-bottom:20px;gap:4px;}
+  .toggle button{
+    border:0;background:transparent;color:#cfd3da;font-size:13px;font-weight:600;
+    padding:8px 18px;border-radius:999px;cursor:pointer;transition:.15s;
+  }
+  .toggle button.active{background:var(--orange);color:#fff;}
+
+  /* phone frame */
+  .phone{
+    width:390px;max-width:100%;height:780px;background:var(--text10);
+    border-radius:38px;border:10px solid #11131a;overflow:hidden;position:relative;
+    box-shadow:0 20px 60px rgba(0,0,0,.5);
+  }
+  .notch{position:absolute;top:0;left:50%;transform:translateX(-50%);width:140px;height:24px;background:#11131a;border-radius:0 0 16px 16px;z-index:30;}
+  .scroll{height:100%;overflow-y:auto;padding-bottom:80px;}
+  .scroll::-webkit-scrollbar{width:0;}
+
+  /* header */
+  .header{display:flex;align-items:center;justify-content:space-between;padding:34px 20px 8px;}
+  .loc-label{font-size:12px;color:var(--text300);}
+  .loc-city{font-size:20px;font-weight:700;display:flex;align-items:center;gap:4px;}
+  .bell{width:46px;height:46px;border-radius:50%;background:var(--orange-50);display:flex;align-items:center;justify-content:center;position:relative;font-size:20px;}
+  .bell .dot{position:absolute;top:12px;right:12px;width:8px;height:8px;border-radius:50%;background:var(--orange);border:2px solid var(--orange-50);}
+
+  /* search */
+  .search{margin:8px 20px;background:var(--orange-50);border-radius:12px;padding:14px 16px;color:var(--text300);font-size:15px;display:flex;align-items:center;gap:10px;}
+
+  /* category chips */
+  .chips{display:flex;gap:8px;overflow-x:auto;padding:6px 20px 4px;}
+  .chips::-webkit-scrollbar{display:none;}
+  .chip{flex:0 0 auto;padding:8px 16px;border-radius:999px;background:var(--white);box-shadow:var(--shadow);font-size:13px;font-weight:600;color:var(--text500);display:flex;gap:6px;align-items:center;}
+  .chip.active{background:var(--orange);color:#fff;}
+
+  /* section header */
+  .sec-head{display:flex;justify-content:space-between;align-items:center;padding:18px 20px 8px;}
+  .sec-head h2{font-size:16px;font-weight:700;}
+  .sec-head .sub{font-size:12px;color:var(--text300);font-weight:400;margin-top:2px;}
+  .sec-head a{font-size:13px;font-weight:700;color:var(--orange);text-decoration:none;}
+
+  /* horizontal scroller */
+  .hscroll{display:flex;gap:12px;overflow-x:auto;padding:4px 20px 4px;}
+  .hscroll::-webkit-scrollbar{display:none;}
+
+  /* popular card (image top) */
+  .pcard{flex:0 0 240px;background:var(--white);border-radius:16px;box-shadow:var(--shadow);padding:8px;}
+  .pcard .img{height:130px;border-radius:12px;position:relative;overflow:hidden;}
+  .pcard .meta{padding:8px 4px 4px;}
+  .pcard .date{font-size:11px;color:var(--text300);}
+  .pcard .title{font-size:14px;font-weight:700;margin:3px 0 6px;}
+  .pcard .row{display:flex;align-items:center;justify-content:space-between;gap:6px;}
+  .pcard .locrow{font-size:13px;color:var(--text300);display:flex;align-items:center;gap:4px;overflow:hidden;white-space:nowrap;}
+
+  /* wide card (image left) */
+  .wcard{background:var(--white);border-radius:16px;box-shadow:var(--shadow);padding:8px;display:flex;gap:12px;margin:6px 20px;}
+  .wcard .img{width:92px;height:92px;border-radius:12px;flex:0 0 92px;position:relative;overflow:hidden;}
+  .wcard .body{flex:1;display:flex;flex-direction:column;justify-content:space-between;padding:2px 0;}
+  .wcard .title{font-size:15px;font-weight:700;line-height:1.25;}
+  .wcard .row{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-top:6px;}
+  .wcard .locrow{font-size:13px;color:var(--text300);display:flex;align-items:center;gap:4px;overflow:hidden;white-space:nowrap;}
+
+  /* badges & chips on cards */
+  .pill{padding:4px 10px;border-radius:999px;font-size:11px;font-weight:700;white-space:nowrap;}
+  .pill.price{background:var(--orange-soft);color:var(--orange);}
+  .pill.free{background:#E3F7EE;color:var(--green);}
+  .join{background:var(--orange);color:#fff;padding:7px 16px;border-radius:999px;font-size:13px;font-weight:700;}
+  .badge{position:absolute;top:8px;left:8px;padding:4px 8px;border-radius:8px;font-size:10px;font-weight:700;color:#fff;display:flex;align-items:center;gap:4px;}
+  .badge.hot{background:rgba(229,72,77,.92);}
+  .badge.feat{background:rgba(255,133,81,.95);top:8px;left:auto;right:8px;}
+  .datebadge{position:absolute;top:6px;left:6px;width:44px;height:44px;background:#fff;border-radius:10px;box-shadow:var(--shadow);display:flex;flex-direction:column;align-items:center;justify-content:center;}
+  .datebadge b{font-size:16px;line-height:1;}
+  .datebadge span{font-size:10px;color:var(--text300);}
+  .social{font-size:12px;color:var(--text300);display:flex;align-items:center;gap:4px;margin-top:4px;}
+  .avatars{display:flex;}
+  .avatars i{width:18px;height:18px;border-radius:50%;border:2px solid #fff;margin-left:-6px;display:inline-block;}
+  .progress{height:4px;border-radius:999px;background:#eee;margin-top:6px;overflow:hidden;}
+  .progress i{display:block;height:100%;background:var(--red);}
+
+  /* hero / collection banner */
+  .hero{margin:6px 20px;border-radius:18px;height:150px;position:relative;overflow:hidden;display:flex;align-items:flex-end;padding:16px;color:#fff;background:linear-gradient(135deg,#7b2ff7,#f107a3);}
+  .hero h3{font-size:20px;font-weight:800;}
+  .hero p{font-size:12px;opacity:.9;margin-top:2px;}
+  .hero .tag{position:absolute;top:14px;left:16px;background:rgba(255,255,255,.2);padding:4px 10px;border-radius:999px;font-size:11px;font-weight:700;backdrop-filter:blur(4px);}
+
+  /* interest picker */
+  .interest{margin:10px 20px;background:#fff;border-radius:16px;box-shadow:var(--shadow);padding:16px;}
+  .interest h3{font-size:15px;font-weight:700;}
+  .interest p{font-size:12px;color:var(--text300);margin:4px 0 12px;}
+  .interest .opts{display:flex;flex-wrap:wrap;gap:8px;}
+  .interest .opt{padding:8px 14px;border-radius:999px;background:var(--text10);font-size:13px;font-weight:600;border:1.5px solid transparent;cursor:pointer;}
+  .interest .opt.sel{background:var(--orange-50);border-color:var(--orange);color:var(--orange);}
+  .interest .cta{margin-top:14px;background:var(--orange);color:#fff;text-align:center;padding:12px;border-radius:12px;font-weight:700;font-size:14px;}
+
+  /* ticket reminder */
+  .ticket{margin:8px 20px;background:linear-gradient(135deg,#1F2430,#3a4150);color:#fff;border-radius:16px;padding:14px 16px;display:flex;align-items:center;gap:12px;}
+  .ticket .ic{width:42px;height:42px;border-radius:12px;background:rgba(255,255,255,.15);display:flex;align-items:center;justify-content:center;font-size:20px;}
+  .ticket .t1{font-size:11px;opacity:.8;}
+  .ticket .t2{font-size:14px;font-weight:700;}
+  .ticket .go{margin-left:auto;background:var(--orange);padding:8px 14px;border-radius:999px;font-size:12px;font-weight:700;}
+
+  .reason{font-size:12px;color:var(--orange);font-weight:600;padding:0 20px;margin-top:-2px;}
+
+  /* nav bar */
+  .nav{position:absolute;bottom:0;left:0;right:0;height:64px;background:#fff;border-top:1px solid #eee;display:flex;justify-content:space-around;align-items:center;font-size:11px;color:var(--text300);}
+  .nav div{display:flex;flex-direction:column;align-items:center;gap:3px;}
+  .nav div.on{color:var(--orange);}
+  .nav .i{font-size:20px;}
+
+  .legend{color:#cfd3da;font-size:12px;max-width:760px;margin-top:20px;line-height:1.6;}
+  .legend b{color:#fff;}
+  .hidden{display:none;}
+
+  /* image gradients */
+  .g1{background:linear-gradient(135deg,#667eea,#764ba2);}
+  .g2{background:linear-gradient(135deg,#f093fb,#f5576c);}
+  .g3{background:linear-gradient(135deg,#4facfe,#00f2fe);}
+  .g4{background:linear-gradient(135deg,#43e97b,#38f9d7);}
+  .g5{background:linear-gradient(135deg,#fa709a,#fee140);}
+  .g6{background:linear-gradient(135deg,#30cfd0,#330867);}
+  .g7{background:linear-gradient(135deg,#ff9a9e,#fad0c4);}
+  .imgtxt{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;color:rgba(255,255,255,.85);font-size:13px;font-weight:700;text-align:center;padding:8px;}
+</style>
+</head>
+<body>
+
+<div class="pagehead">
+  <h1>Tap — Home redesign (clickable dummy)</h1>
+  <p>Same orange theme, NPR pricing, Nepali cities &amp; festivals. Toggle below to see how the home <b>changes shape per user lifecycle</b> — the core idea from the overview.</p>
+</div>
+
+<div class="toggle">
+  <button id="btnNew" class="active" onclick="setView('new')">🆕 New user</button>
+  <button id="btnReturn" onclick="setView('return')">🔁 Returning user</button>
+</div>
+
+<div class="phone">
+  <div class="notch"></div>
+  <div class="scroll">
+
+    <!-- HEADER (shared) -->
+    <div class="header">
+      <div>
+        <div class="loc-label">Find events near</div>
+        <div class="loc-city">Kathmandu, Nepal ▾</div>
+      </div>
+      <div class="bell">🔔<span class="dot"></span></div>
+    </div>
+    <div class="search">🔍 Search all events…</div>
+
+    <!-- CATEGORY CHIPS (shared) -->
+    <div class="chips">
+      <div class="chip active">✨ For you</div>
+      <div class="chip">🎵 Music</div>
+      <div class="chip">😂 Comedy</div>
+      <div class="chip">⚽ Futsal</div>
+      <div class="chip">💻 Tech</div>
+      <div class="chip">🍜 Food</div>
+      <div class="chip">🪔 Cultural</div>
+    </div>
+
+    <!-- ===================== NEW USER VIEW ===================== -->
+    <div id="viewNew">
+
+      <!-- interest picker -->
+      <div class="interest">
+        <h3>👋 New here? Tell us what you like</h3>
+        <p>Pick 3 or more — we'll tune your home feed.</p>
+        <div class="opts">
+          <div class="opt sel">🎵 Music</div>
+          <div class="opt sel">😂 Comedy</div>
+          <div class="opt">⚽ Futsal</div>
+          <div class="opt sel">💻 Tech</div>
+          <div class="opt">🍜 Food</div>
+          <div class="opt">🪔 Cultural</div>
+          <div class="opt">🎨 Art</div>
+        </div>
+        <div class="cta">Save my interests →</div>
+      </div>
+
+      <!-- festival collection hero -->
+      <div class="hero" style="background:linear-gradient(135deg,#c31432,#240b36);">
+        <div class="tag">🪔 Editorial collection</div>
+        <div>
+          <h3>Best of Dashain 2082</h3>
+          <p>12 events · concerts, melas &amp; cultural nights</p>
+        </div>
+      </div>
+
+      <!-- this weekend -->
+      <div class="sec-head">
+        <div><h2>This Weekend</h2><div class="sub">Sat 7 – Sun 8 Jun in Kathmandu</div></div>
+        <a href="#">See all</a>
+      </div>
+      <div class="hscroll">
+        <div class="pcard">
+          <div class="img g1"><div class="datebadge"><b>07</b><span>JUN</span></div><div class="imgtxt">Live Music Night</div></div>
+          <div class="meta">
+            <div class="date">Jun 7 · 6:00 PM</div>
+            <div class="title">Sajjan Raj Vaidya Live</div>
+            <div class="row"><span class="locrow">📍 LOD, Thamel</span><span class="pill price">Rs 1500</span></div>
+            <div class="social"><span class="avatars"><i class="g2"></i><i class="g3"></i><i class="g4"></i></span> 320 going</div>
+          </div>
+        </div>
+        <div class="pcard">
+          <div class="img g5"><div class="datebadge"><b>08</b><span>JUN</span></div><div class="imgtxt">Comedy</div></div>
+          <div class="meta">
+            <div class="date">Jun 8 · 5:30 PM</div>
+            <div class="title">Comedy Champion Night</div>
+            <div class="row"><span class="locrow">📍 Mandala, Anamnagar</span><span class="pill price">Rs 800</span></div>
+            <div class="social">🔥 Selling fast</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- popular in city -->
+      <div class="sec-head">
+        <div><h2>Popular in Kathmandu</h2></div>
+        <a href="#">See all</a>
+      </div>
+      <div class="hscroll">
+        <div class="pcard">
+          <div class="img g6"><span class="badge feat">★ Featured</span><div class="imgtxt">Tech Summit</div></div>
+          <div class="meta">
+            <div class="date">Jun 14 · 9:00 AM</div>
+            <div class="title">Nepal Startup Summit</div>
+            <div class="row"><span class="locrow">📍 Hyatt, Bouddha</span><span class="pill price">Rs 2000</span></div>
+          </div>
+        </div>
+        <div class="pcard">
+          <div class="img g3"><span class="badge hot">🔥 Almost sold out</span><div class="imgtxt">Concert</div></div>
+          <div class="meta">
+            <div class="date">Jun 20 · 4:00 PM</div>
+            <div class="title">Sunday Jam Open Air</div>
+            <div class="row"><span class="locrow">📍 Patan Durbar Sq.</span><span class="pill price">Rs 1200</span></div>
+            <div class="progress"><i style="width:88%"></i></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- free events -->
+      <div class="sec-head">
+        <div><h2>Free events</h2><div class="sub">No ticket needed</div></div>
+        <a href="#">See all</a>
+      </div>
+      <div class="wcard">
+        <div class="img g4"><div class="datebadge"><b>12</b><span>JUN</span></div></div>
+        <div class="body">
+          <div class="title">Flutter Kathmandu Meetup</div>
+          <div class="row"><span class="locrow">📍 Naxal · Tech</span><span class="pill free">FREE</span></div>
+          <div class="social">🟢 84 going · 30 spots left</div>
+        </div>
+      </div>
+      <div class="wcard">
+        <div class="img g7"><div class="datebadge"><b>15</b><span>JUN</span></div></div>
+        <div class="body">
+          <div class="title">Saturday Morning Yoga in the Park</div>
+          <div class="row"><span class="locrow">📍 Garden of Dreams</span><span class="pill free">FREE</span></div>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- ===================== RETURNING USER VIEW ===================== -->
+    <div id="viewReturn" class="hidden">
+
+      <!-- your ticket reminder -->
+      <div class="ticket">
+        <div class="ic">🎟️</div>
+        <div>
+          <div class="t1">YOUR EVENT · IN 2 DAYS</div>
+          <div class="t2">Sajjan Raj Vaidya Live</div>
+        </div>
+        <div class="go">View ticket</div>
+      </div>
+
+      <!-- for you -->
+      <div class="sec-head">
+        <div><h2>For You</h2><div class="sub">Based on your interests &amp; activity</div></div>
+        <a href="#">See all</a>
+      </div>
+      <div class="hscroll">
+        <div class="pcard">
+          <div class="img g1"><div class="imgtxt">Indie Night</div></div>
+          <div class="meta">
+            <div class="date">Jun 11 · 7:00 PM</div>
+            <div class="title">Indie Night ft. The Elements</div>
+            <div class="row"><span class="locrow">📍 Jazz Upstairs</span><span class="pill price">Rs 1000</span></div>
+          </div>
+        </div>
+        <div class="pcard">
+          <div class="img g6"><div class="imgtxt">Tech Talk</div></div>
+          <div class="meta">
+            <div class="date">Jun 18 · 5:00 PM</div>
+            <div class="title">AI Builders Night KTM</div>
+            <div class="row"><span class="locrow">📍 Karkhana, Jhamel</span><span class="pill free">FREE</span></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- because you saved -->
+      <div class="sec-head">
+        <div><h2>Because you saved <i>Comedy Champion</i></h2></div>
+        <a href="#">See all</a>
+      </div>
+      <div class="wcard">
+        <div class="img g5"><div class="datebadge"><b>21</b><span>JUN</span></div></div>
+        <div class="body">
+          <div class="title">Stand-Up Saturday Vol. 9</div>
+          <div class="row"><span class="locrow">📍 Mandala Theatre</span><span class="pill price">Rs 700</span></div>
+          <div class="social">😂 Similar to events you like</div>
+        </div>
+      </div>
+
+      <!-- recently viewed -->
+      <div class="sec-head"><div><h2>Pick up where you left off</h2></div><a href="#">See all</a></div>
+      <div class="hscroll">
+        <div class="pcard">
+          <div class="img g3"><span class="badge hot">🔥 Almost sold out</span><div class="imgtxt">Open Air</div></div>
+          <div class="meta">
+            <div class="date">Jun 20 · 4:00 PM</div>
+            <div class="title">Sunday Jam Open Air</div>
+            <div class="row"><span class="locrow">📍 Patan Durbar Sq.</span><span class="pill price">Rs 1200</span></div>
+            <div class="progress"><i style="width:88%"></i></div>
+          </div>
+        </div>
+        <div class="pcard">
+          <div class="img g2"><div class="imgtxt">Food Fest</div></div>
+          <div class="meta">
+            <div class="date">Jun 22 · 12:00 PM</div>
+            <div class="title">Newari Food Festival</div>
+            <div class="row"><span class="locrow">📍 Bhaktapur</span><span class="pill price">Rs 500</span></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- from organizers you follow -->
+      <div class="sec-head"><div><h2>From organizers you follow</h2></div><a href="#">See all</a></div>
+      <div class="wcard">
+        <div class="img g6"><div class="datebadge"><b>28</b><span>JUN</span></div></div>
+        <div class="body">
+          <div class="title">Karkhana — Robotics Workshop</div>
+          <div class="row"><span class="locrow">📍 Jawalakhel</span><span class="pill price">Rs 1500</span></div>
+          <div class="social">⭐ You follow this organizer</div>
+        </div>
+      </div>
+
+      <!-- just announced -->
+      <div class="sec-head"><div><h2>Just announced</h2><div class="sub">New since your last visit</div></div><a href="#">See all</a></div>
+      <div class="wcard">
+        <div class="img g1"><div class="datebadge"><b>05</b><span>JUL</span></div></div>
+        <div class="body">
+          <div class="title">Nepal Music Awards 2082</div>
+          <div class="row"><span class="locrow">📍 Dasharath Stadium</span><span class="pill price">Rs 2500</span></div>
+          <div class="social">🆕 Added today</div>
+        </div>
+      </div>
+
+    </div>
+
+    <div style="height:24px"></div>
+  </div>
+
+  <!-- bottom nav -->
+  <div class="nav">
+    <div class="on"><span class="i">🏠</span>Home</div>
+    <div><span class="i">🔍</span>Explore</div>
+    <div><span class="i">🎟️</span>Tickets</div>
+    <div><span class="i">❤️</span>Saved</div>
+    <div><span class="i">👤</span>Profile</div>
+  </div>
+</div>
+
+<div class="legend">
+  <b>What's new vs. your current 3 static sections:</b><br>
+  • Category chips + working "See all" &nbsp; • Time-based "This Weekend" &nbsp; • Social proof ("320 going") &nbsp; • Urgency ("Almost sold out" + fill bar) &nbsp; • Free-events shelf &nbsp; • Dashain editorial collection<br>
+  <b>New user</b> → interest picker + breadth (popular, free, festivals). &nbsp; <b>Returning user</b> → ticket reminder on top, "For You", "Because you saved", recently viewed, followed organizers, just-announced.
+</div>
+
+<script>
+  function setView(v){
+    document.getElementById('viewNew').classList.toggle('hidden', v!=='new');
+    document.getElementById('viewReturn').classList.toggle('hidden', v!=='return');
+    document.getElementById('btnNew').classList.toggle('active', v==='new');
+    document.getElementById('btnReturn').classList.toggle('active', v==='return');
+    document.querySelector('.scroll').scrollTop = 0;
+  }
+</script>
+</body>
+</html>

@@ -1,0 +1,110 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>CFBundleDevelopmentRegion</key>
+	<string>$(DEVELOPMENT_LANGUAGE)</string>
+	<key>CFBundleDisplayName</key>
+	<string>Evnto</string>
+	<key>CFBundleExecutable</key>
+	<string>$(EXECUTABLE_NAME)</string>
+	<key>CFBundleIdentifier</key>
+	<string>$(PRODUCT_BUNDLE_IDENTIFIER)</string>
+	<key>CFBundleInfoDictionaryVersion</key>
+	<string>6.0</string>
+	<key>CFBundleName</key>
+	<string>tap_app</string>
+	<key>CFBundlePackageType</key>
+	<string>APPL</string>
+	<key>CFBundleShortVersionString</key>
+	<string>$(FLUTTER_BUILD_NAME)</string>
+	<key>CFBundleSignature</key>
+	<string>????</string>
+	<key>CFBundleVersion</key>
+	<string>$(FLUTTER_BUILD_NUMBER)</string>
+	<key>LSRequiresIPhoneOS</key>
+	<true/>
+	<key>UILaunchStoryboardName</key>
+	<string>LaunchScreen</string>
+	<key>UIMainStoryboardFile</key>
+	<string>Main</string>
+	<key>UISupportedInterfaceOrientations</key>
+	<array>
+		<string>UIInterfaceOrientationPortrait</string>
+		<string>UIInterfaceOrientationLandscapeLeft</string>
+		<string>UIInterfaceOrientationLandscapeRight</string>
+	</array>
+	<key>UISupportedInterfaceOrientations~ipad</key>
+	<array>
+		<string>UIInterfaceOrientationPortrait</string>
+		<string>UIInterfaceOrientationPortraitUpsideDown</string>
+		<string>UIInterfaceOrientationLandscapeLeft</string>
+		<string>UIInterfaceOrientationLandscapeRight</string>
+	</array>
+	<key>CADisableMinimumFrameDurationOnPhone</key>
+	<true/>
+	<key>UIApplicationSupportsIndirectInputEvents</key>
+	<true/>
+
+	<!-- Background mode for silent and data-only push delivery. -->
+	<key>UIBackgroundModes</key>
+	<array>
+		<string>remote-notification</string>
+	</array>
+
+	<!-- ===========================================================
+	     Tap permission usage descriptions
+	     ===========================================================
+	     iOS shows each string verbatim in the system permission
+	     prompt the first time the API is used. Keep them short,
+	     plain, and honest about what the app will do.
+	     =========================================================== -->
+
+	<!-- Bluetooth for BLE proximity sharing via nearby_connections. -->
+	<key>NSBluetoothAlwaysUsageDescription</key>
+	<string>Tap uses Bluetooth to share your contact card with nearby phones.</string>
+	<key>NSBluetoothPeripheralUsageDescription</key>
+	<string>Tap uses Bluetooth to share your contact card with nearby phones.</string>
+
+	<!-- Local network for the WiFi side of Nearby. iOS shows this prompt
+	     the first time the app advertises or browses Bonjour services. -->
+	<key>NSLocalNetworkUsageDescription</key>
+	<string>Tap uses your local network to discover nearby phones for contact sharing.</string>
+	<key>NSBonjourServices</key>
+	<array>
+		<string>_com.tap.app._tcp</string>
+		<string>_com.tap.app._udp</string>
+	</array>
+
+	<!-- Camera for QR scanning. -->
+	<key>NSCameraUsageDescription</key>
+	<string>Tap uses the camera to scan QR codes for contact sharing.</string>
+
+	<!-- Contacts for saving a received card to the address book. -->
+	<key>NSContactsUsageDescription</key>
+	<string>Tap saves received contact cards to your address book.</string>
+
+	<!-- Photo library: read for picking a profile photo, write for saving
+	     the generated QR image. -->
+	<key>NSPhotoLibraryUsageDescription</key>
+	<string>Tap lets you pick a profile photo for your contact card.</string>
+	<key>NSPhotoLibraryAddUsageDescription</key>
+	<string>Tap saves QR codes to your photo library so you can share them later.</string>
+
+	<!-- NFC read (iOS only supports reading; writing is blocked by Apple).
+	     The NFC entitlement also needs to be enabled in the Xcode
+	     "Signing & Capabilities" tab and on the App ID. -->
+	<key>NFCReaderUsageDescription</key>
+	<string>Tap reads NFC tags to receive contact cards.</string>
+
+	<!-- Location for the "Use my current location" button on the Choose
+	     Location screen. Only read when the user taps the button. -->
+	<key>NSLocationWhenInUseUsageDescription</key>
+	<string>Tap uses your location to find events near you.</string>
+
+	<!-- Google Maps key. The value comes from Secrets.xcconfig (gitignored)
+	     and is read by AppDelegate at launch. -->
+	<key>MAPS_API_KEY</key>
+	<string>$(MAPS_API_KEY)</string>
+</dict>
+</plist>

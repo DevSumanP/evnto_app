@@ -1,0 +1,15 @@
+# Android release signing — local builds only.
+#
+# Copy this file to `android/key.properties` and fill in real values.
+# `android/key.properties` and `*.jks` are gitignored — never commit them.
+#
+# `storeFile` is resolved relative to `android/app/`, so place the keystore
+# at `android/app/upload-keystore.jks`.
+#
+# CI does NOT use this file directly — the GitHub Actions workflow writes its
+# own `key.properties` from repository secrets at build time.
+
+storeFile=upload-keystore.jks
+storePassword=YOUR_KEYSTORE_PASSWORD
+keyAlias=upload
+keyPassword=YOUR_KEY_PASSWORD
