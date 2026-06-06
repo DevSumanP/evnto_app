@@ -341,7 +341,7 @@ class _SectionHeader extends StatelessWidget {
             style: AppTextStyles.bodyBold.copyWith(color: AppColors.text500),
           ),
           TextButton(
-            onPressed:  () {},
+            onPressed: () {},
             style: TextButton.styleFrom(
               padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
               minimumSize: const Size(0, 0),

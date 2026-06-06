@@ -6,8 +6,7 @@ import '../entities/user_location.dart';
 import '../repositories/location_repository.dart';
 
 @lazySingleton
-class ResolveCurrentLocationUseCase
-    implements UseCase<UserLocation, NoParams> {
+class ResolveCurrentLocationUseCase implements UseCase<UserLocation, NoParams> {
   ResolveCurrentLocationUseCase(this._repository);
 
   final LocationRepository _repository;

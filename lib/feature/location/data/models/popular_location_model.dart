@@ -24,11 +24,8 @@ class PopularLocationModel {
     );
   }
 
-  PopularLocation toEntity() => PopularLocation(
-        city: city,
-        country: country,
-        venueCount: venueCount,
-      );
+  PopularLocation toEntity() =>
+      PopularLocation(city: city, country: country, venueCount: venueCount);
 
   static int? _asInt(final Object? value) {
     if (value is int) return value;

@@ -82,14 +82,16 @@ class CheckoutBloc extends BaseBloc<CheckoutEvent, CheckoutState> {
   static const Uuid _uuid = Uuid();
 
   void _onStarted(final CheckoutStarted e, final Emitter<CheckoutState> emit) {
-    emit(state.copyWith(
-      eventId: e.eventId,
-      items: e.items,
-      buyer: e.buyer,
-      status: CheckoutStatus.idle,
-      session: null,
-      error: null,
-    ));
+    emit(
+      state.copyWith(
+        eventId: e.eventId,
+        items: e.items,
+        buyer: e.buyer,
+        status: CheckoutStatus.idle,
+        session: null,
+        error: null,
+      ),
+    );
   }
 
   Future<void> _onPlaceOrder(
@@ -104,29 +106,31 @@ class CheckoutBloc extends BaseBloc<CheckoutEvent, CheckoutState> {
     final request = CheckoutInitiateRequest(
       eventId: state.eventId,
       items: state.items
-          .map((i) => CheckoutLineItemDto(
-                tierId: i.tier.id,
-                quantity: i.quantity,
-              ))
+          .map(
+            (i) => CheckoutLineItemDto(tierId: i.tier.id, quantity: i.quantity),
+          )
           .toList(growable: false),
       buyer: state.buyer!,
     );
 
-    final result = await _initiate(InitiateCheckoutParams(
-      request: request,
-      idempotencyKey: _uuid.v4(),
-    ));
+    final result = await _initiate(
+      InitiateCheckoutParams(request: request, idempotencyKey: _uuid.v4()),
+    );
 
     result.fold(
-      (failure) => emit(state.copyWith(
-        status: CheckoutStatus.failure,
-        error: getErrorMessage(failure),
-      )),
-      (session) => emit(state.copyWith(
-        status: CheckoutStatus.ready,
-        session: session,
-        error: null,
-      )),
+      (failure) => emit(
+        state.copyWith(
+          status: CheckoutStatus.failure,
+          error: getErrorMessage(failure),
+        ),
+      ),
+      (session) => emit(
+        state.copyWith(
+          status: CheckoutStatus.ready,
+          session: session,
+          error: null,
+        ),
+      ),
     );
   }
 
@@ -142,15 +146,19 @@ class CheckoutBloc extends BaseBloc<CheckoutEvent, CheckoutState> {
     );
 
     result.fold(
-      (failure) => emit(state.copyWith(
-        status: CheckoutStatus.failure,
-        error: getErrorMessage(failure),
-      )),
-      (tickets) => emit(state.copyWith(
-        status: CheckoutStatus.succeeded,
-        tickets: tickets,
-        error: null,
-      )),
+      (failure) => emit(
+        state.copyWith(
+          status: CheckoutStatus.failure,
+          error: getErrorMessage(failure),
+        ),
+      ),
+      (tickets) => emit(
+        state.copyWith(
+          status: CheckoutStatus.succeeded,
+          tickets: tickets,
+          error: null,
+        ),
+      ),
     );
   }
 
@@ -161,10 +169,8 @@ class CheckoutBloc extends BaseBloc<CheckoutEvent, CheckoutState> {
     final CheckoutPaymentCanceled e,
     final Emitter<CheckoutState> emit,
   ) {
-    emit(state.copyWith(
-      status: CheckoutStatus.idle,
-      session: null,
-      error: null,
-    ));
+    emit(
+      state.copyWith(status: CheckoutStatus.idle, session: null, error: null),
+    );
   }
 }

@@ -68,11 +68,12 @@ class LoggingInterceptor extends Interceptor {
 
       if (options.queryParameters.isNotEmpty) {
         debugPrint('│ Query Parameters:');
-        options.queryParameters.forEach(
-          (final String key, final Object? value) {
-            debugPrint('│   $key: $value');
-          },
-        );
+        options.queryParameters.forEach((
+          final String key,
+          final Object? value,
+        ) {
+          debugPrint('│   $key: $value');
+        });
       }
 
       if (options.data != null) {
@@ -100,11 +101,12 @@ class LoggingInterceptor extends Interceptor {
       debugPrint(_midBar);
 
       debugPrint('│ Headers:');
-      response.headers.map.forEach(
-        (final String key, final List<String> value) {
-          debugPrint('│   $key: ${_maskHeader(key, value.join(', '))}');
-        },
-      );
+      response.headers.map.forEach((
+        final String key,
+        final List<String> value,
+      ) {
+        debugPrint('│   $key: ${_maskHeader(key, value.join(', '))}');
+      });
 
       debugPrint('│ Body:');
       debugPrint(_indentBody(_redactBody(response.data)));

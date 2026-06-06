@@ -58,7 +58,11 @@ String _distanceLabel(final double? metres) {
 }
 
 class ExploreMapLayer extends StatefulWidget {
-  const ExploreMapLayer({required this.center, required this.events, super.key});
+  const ExploreMapLayer({
+    required this.center,
+    required this.events,
+    super.key,
+  });
 
   final LatLng center;
   final List<Event> events;

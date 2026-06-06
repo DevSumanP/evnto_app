@@ -14,10 +14,7 @@ const Color _kAccentOrange = Color(0xFFFF8551);
 
 @RoutePage(name: 'OrderCompleteRoute')
 class OrderCompletePage extends StatelessWidget {
-  const OrderCompletePage({
-    super.key,
-    @PathParam('id') required this.orderId,
-  });
+  const OrderCompletePage({super.key, @PathParam('id') required this.orderId});
 
   final String orderId;
 

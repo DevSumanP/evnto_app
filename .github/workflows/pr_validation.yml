@@ -46,8 +46,10 @@ jobs:
       - name: Verify formatting
         run: dart format --output=none --set-exit-if-changed . 
       
-      - name: Analyze 
-        run: flutter analyze
+      # Gate on warnings and errors; info-level lints (deprecations, etc.) are
+      # advisory and don't block a merge.
+      - name: Analyze
+        run: flutter analyze --no-fatal-infos
 
       - name: Run tests
         run: |

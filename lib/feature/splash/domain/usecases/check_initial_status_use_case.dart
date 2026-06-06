@@ -22,7 +22,11 @@ import 'check_app_status_use_case.dart';
 @lazySingleton
 class InitializeAppUseCase
     implements UseCase<SplashNavigationResult, NoParams> {
-  InitializeAppUseCase(this._checkAppStatusUseCase, this._storage, this._session);
+  InitializeAppUseCase(
+    this._checkAppStatusUseCase,
+    this._storage,
+    this._session,
+  );
 
   final CheckAppStatusUseCase _checkAppStatusUseCase;
   final StorageService _storage;
@@ -41,8 +45,9 @@ class InitializeAppUseCase
     }
 
     // 2. Backend health.
-    final Either<Failure, dynamic> healthResult =
-        await _checkAppStatusUseCase(const NoParams());
+    final Either<Failure, dynamic> healthResult = await _checkAppStatusUseCase(
+      const NoParams(),
+    );
 
     final SplashNavigationResult? maintenanceDecision = healthResult.fold(
       (final Failure failure) {

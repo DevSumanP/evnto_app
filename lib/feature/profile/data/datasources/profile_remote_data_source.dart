@@ -125,7 +125,8 @@ class ProfileRemoteDataSourceImpl implements ProfileRemoteDataSource {
   }) async {
     // Unique name per upload so the CDN / Image.network never serves a stale
     // photo for the same path.
-    final objectPath = '$userId/avatar_${DateTime.now().millisecondsSinceEpoch}'
+    final objectPath =
+        '$userId/avatar_${DateTime.now().millisecondsSinceEpoch}'
         '.$fileExt';
     final base = AppConfig.supabaseUrl;
 

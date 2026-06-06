@@ -75,9 +75,7 @@ abstract class BaseRepository {
       await operation();
       return const Right<Failure, Unit>(unit);
     } on Object catch (e, s) {
-      return Left<Failure, Unit>(
-        ErrorHandler.instance.handleException(e, s),
-      );
+      return Left<Failure, Unit>(ErrorHandler.instance.handleException(e, s));
     }
   }
 
@@ -106,9 +104,7 @@ abstract class BaseRepository {
         category: 'Repository',
         error: e,
       );
-      return Left<Failure, T>(
-        ErrorHandler.instance.handleException(e, s),
-      );
+      return Left<Failure, T>(ErrorHandler.instance.handleException(e, s));
     }
     return execute(operation: operation);
   }
@@ -234,10 +230,7 @@ abstract class BaseRepository {
     final Future<Either<Failure, R>> Function(T value) next,
   ) async {
     final Either<Failure, T> result = await source;
-    return result.fold(
-      (final Failure f) async => Left<Failure, R>(f),
-      next,
-    );
+    return result.fold((final Failure f) async => Left<Failure, R>(f), next);
   }
 
   // ---------------------------------------------------------------------------

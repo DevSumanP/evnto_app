@@ -118,7 +118,7 @@ class CustomDownloadButton extends StatelessWidget {
         width: 36,
         height: 36,
         decoration: BoxDecoration(
-          color: AppColors.primary50.withValues(alpha:0.5),
+          color: AppColors.primary50.withValues(alpha: 0.5),
           borderRadius: BorderRadius.circular(8),
         ),
         child: Center(

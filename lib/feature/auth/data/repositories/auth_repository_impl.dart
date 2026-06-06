@@ -102,8 +102,6 @@ class AuthRepositoryImpl extends BaseRepository implements AuthRepository {
 
   @override
   Future<Either<Failure, Unit>> updatePassword(final String newPassword) {
-    return executeVoid(
-      operation: () => _remote.updatePassword(newPassword),
-    );
+    return executeVoid(operation: () => _remote.updatePassword(newPassword));
   }
 }

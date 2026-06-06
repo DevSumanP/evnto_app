@@ -113,9 +113,7 @@ class EventDetailModel {
     isFeatured: isFeatured,
     organizer: organizer.toEntity(),
     tiers: tiers.map((t) => t.toEntity()).toList(growable: false),
-    seatTallies: seatTallies.map(
-      (k, v) => MapEntry(k, v.toEntity()),
-    ),
+    seatTallies: seatTallies.map((k, v) => MapEntry(k, v.toEntity())),
     venueId: venueId,
     description: description,
     heroImageUrl: heroImageUrl,
@@ -208,13 +206,8 @@ class VenueModel {
     );
   }
 
-  Venue toEntity() => Venue(
-    id: id,
-    name: name,
-    address: address,
-    city: city,
-    country: country,
-  );
+  Venue toEntity() =>
+      Venue(id: id, name: name, address: address, city: city, country: country);
 }
 
 class TicketTierModel {
@@ -276,11 +269,7 @@ class TicketTierModel {
 }
 
 class SeatTallyModel {
-  const SeatTallyModel({
-    this.available = 0,
-    this.held = 0,
-    this.sold = 0,
-  });
+  const SeatTallyModel({this.available = 0, this.held = 0, this.sold = 0});
 
   final int available;
   final int held;

@@ -107,10 +107,7 @@ class GetTicketBloc extends BaseBloc<GetTicketEvent, GetTicketState> {
     // browsing.
     if (state.buyer != null) return;
     final result = await _getCurrentUser(const NoParams());
-    result.fold(
-      (_) {},
-      (user) => emit(state.copyWith(buyer: user)),
-    );
+    result.fold((_) {}, (user) => emit(state.copyWith(buyer: user)));
   }
 
   void _onIncremented(

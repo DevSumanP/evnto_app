@@ -22,8 +22,9 @@ class CurrentUserModel {
 
   factory CurrentUserModel.fromJson(final Map<String, dynamic> json) {
     final Object? meta = json['user_metadata'];
-    final Map<String, dynamic>? metaMap =
-        meta is Map<String, dynamic> ? meta : null;
+    final Map<String, dynamic>? metaMap = meta is Map<String, dynamic>
+        ? meta
+        : null;
 
     return CurrentUserModel(
       id: (json['id'] as String?)?.trim() ?? '',
@@ -36,10 +37,6 @@ class CurrentUserModel {
   static String? _nullIfEmpty(final String? s) =>
       (s == null || s.isEmpty) ? null : s;
 
-  CurrentUser toEntity() => CurrentUser(
-        id: id,
-        email: email,
-        displayName: displayName,
-        phone: phone,
-      );
+  CurrentUser toEntity() =>
+      CurrentUser(id: id, email: email, displayName: displayName, phone: phone);
 }

@@ -44,7 +44,7 @@ abstract class EventDetailState
 @injectable
 class EventDetailBloc extends BaseBloc<EventDetailEvent, EventDetailState> {
   EventDetailBloc(this._getEventDetail, this._favorites)
-      : super(const EventDetailState()) {
+    : super(const EventDetailState()) {
     on<EventDetailStarted>(_onStarted);
     on<EventDetailRetried>(_onRetried);
   }

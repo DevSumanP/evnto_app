@@ -109,7 +109,8 @@ class AppLogger {
   void _logStartupBanner() {
     if (!_enabled) return;
     final String timestamp = DateTime.now().toString().substring(0, 19);
-    final String banner = '''
+    final String banner =
+        '''
 ${_color(AnsiColors.brightCyan)}╔════════════════════════════════════════════════════════════════════════════╗
 ║                           🚀 APPLICATION STARTED 🚀                        ║
 ║                    $timestamp                    ║
@@ -131,22 +132,20 @@ ${_color(AnsiColors.brightCyan)}╔═══════════════
     final String message, {
     final String? category,
     final Object? error,
-  }) =>
-      _log(LogLevel.warning, message, category: category, error: error);
+  }) => _log(LogLevel.warning, message, category: category, error: error);
 
   void error(
     final String message, [
     final Object? error,
     final StackTrace? stackTrace,
     final String? category,
-  ]) =>
-      _log(
-        LogLevel.error,
-        message,
-        category: category,
-        error: error,
-        stackTrace: stackTrace,
-      );
+  ]) => _log(
+    LogLevel.error,
+    message,
+    category: category,
+    error: error,
+    stackTrace: stackTrace,
+  );
 
   void success(final String message, {final String? category}) =>
       _log(LogLevel.success, message, category: category);
@@ -238,8 +237,9 @@ ${_color(AnsiColors.brightCyan)}╔═══════════════
   /// Build a header like `┌─ title ─────────────────╮` padded to [_groupWidth].
   String _buildGroupHeader(final String title) {
     // 4 reserved chars for the `┌─ ` prefix and trailing `╮`.
-    final int padCount =
-        _groupWidth - title.length - 4 < 0 ? 0 : _groupWidth - title.length - 4;
+    final int padCount = _groupWidth - title.length - 4 < 0
+        ? 0
+        : _groupWidth - title.length - 4;
     return '┌─ $title ${'─' * padCount}╮';
   }
 
@@ -256,7 +256,8 @@ ${_color(AnsiColors.brightCyan)}╔═══════════════
     final void Function() body, {
     final String color = AnsiColors.brightBlue,
   }) {
-    if (_enabled) _print('${_color(color)}${_buildGroupHeader(title)}${_reset()}');
+    if (_enabled)
+      _print('${_color(color)}${_buildGroupHeader(title)}${_reset()}');
     body();
     if (_enabled) {
       _print('${_color(color)}${_buildGroupFooter()}${_reset()}');
@@ -270,7 +271,8 @@ ${_color(AnsiColors.brightCyan)}╔═══════════════
     final Future<void> Function() body, {
     final String color = AnsiColors.brightBlue,
   }) async {
-    if (_enabled) _print('${_color(color)}${_buildGroupHeader(title)}${_reset()}');
+    if (_enabled)
+      _print('${_color(color)}${_buildGroupHeader(title)}${_reset()}');
     await body();
     if (_enabled) {
       _print('${_color(color)}${_buildGroupFooter()}${_reset()}');

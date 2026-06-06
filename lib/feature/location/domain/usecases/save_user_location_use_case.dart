@@ -18,8 +18,7 @@ class SaveUserLocationParams extends Equatable {
 }
 
 @lazySingleton
-class SaveUserLocationUseCase
-    implements UseCase<Unit, SaveUserLocationParams> {
+class SaveUserLocationUseCase implements UseCase<Unit, SaveUserLocationParams> {
   SaveUserLocationUseCase(this._repository);
 
   final LocationRepository _repository;

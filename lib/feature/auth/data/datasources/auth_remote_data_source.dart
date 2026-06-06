@@ -132,10 +132,7 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
       if (errorCode == 'user_already_exists' ||
           lowered.contains('already registered') ||
           lowered.contains('already exists')) {
-        return EmailAlreadyExistsException(
-          details: data,
-          stackTrace: s,
-        );
+        return EmailAlreadyExistsException(details: data, stackTrace: s);
       }
       if (lowered.contains('not confirmed')) {
         return EmailNotVerifiedException(
@@ -329,9 +326,7 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
     await _apiClient.post<dynamic>(
       url,
       options: Options(
-        extra: const <String, dynamic>{
-          AuthInterceptor.noRefreshExtraKey: true,
-        },
+        extra: const <String, dynamic>{AuthInterceptor.noRefreshExtraKey: true},
         headers: <String, String>{
           if (AppConfig.supabaseAnonKey.isNotEmpty)
             ApiConstants.supabaseApiKey: AppConfig.supabaseAnonKey,

@@ -61,9 +61,7 @@ class NotificationService {
     // For cold start we defer to the first frame so the router is mounted.
     final initial = await _messaging.getInitialMessage();
     if (initial != null) {
-      WidgetsBinding.instance.addPostFrameCallback(
-        (_) => _handleTap(initial),
-      );
+      WidgetsBinding.instance.addPostFrameCallback((_) => _handleTap(initial));
     }
     FirebaseMessaging.onMessageOpenedApp.listen(_handleTap);
 

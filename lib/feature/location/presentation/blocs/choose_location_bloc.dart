@@ -30,9 +30,7 @@ part 'choose_location_bloc.freezed.dart';
 // ─── Events ──────────────────────────────────────────────────────────────────
 
 @freezed
-class ChooseLocationEvent
-    with _$ChooseLocationEvent
-    implements BaseBlocEvent {
+class ChooseLocationEvent with _$ChooseLocationEvent implements BaseBlocEvent {
   const factory ChooseLocationEvent.started() = ChooseLocationStarted;
   const factory ChooseLocationEvent.queryChanged(String query) =
       ChooseLocationQueryChanged;
@@ -72,8 +70,7 @@ abstract class ChooseLocationState
 
   const ChooseLocationState._();
 
-  bool get isLoadingPopular =>
-      status == ChooseLocationStatus.loadingPopular;
+  bool get isLoadingPopular => status == ChooseLocationStatus.loadingPopular;
   bool get isResolvingCurrent =>
       status == ChooseLocationStatus.resolvingCurrent;
   bool get isSaving => status == ChooseLocationStatus.saving;
@@ -95,11 +92,8 @@ abstract class ChooseLocationState
 @injectable
 class ChooseLocationBloc
     extends BaseBloc<ChooseLocationEvent, ChooseLocationState> {
-  ChooseLocationBloc(
-    this._getPopular,
-    this._resolveCurrent,
-    this._saveLocation,
-  ) : super(const ChooseLocationState()) {
+  ChooseLocationBloc(this._getPopular, this._resolveCurrent, this._saveLocation)
+    : super(const ChooseLocationState()) {
     on<ChooseLocationStarted>(_onStarted);
     on<ChooseLocationQueryChanged>(_onQueryChanged);
     on<ChooseLocationUseCurrentRequested>(_onUseCurrent);
@@ -160,18 +154,15 @@ class ChooseLocationBloc
     );
 
     final result = await _resolveCurrent(const NoParams());
-    final UserLocation? resolved = result.fold(
-      (failure) {
-        emit(
-          state.copyWith(
-            status: ChooseLocationStatus.failure,
-            failureMessage: getErrorMessage(failure),
-          ),
-        );
-        return null;
-      },
-      (loc) => loc,
-    );
+    final UserLocation? resolved = result.fold((failure) {
+      emit(
+        state.copyWith(
+          status: ChooseLocationStatus.failure,
+          failureMessage: getErrorMessage(failure),
+        ),
+      );
+      return null;
+    }, (loc) => loc);
     if (resolved == null) return;
 
     await _saveAndEmit(
@@ -186,11 +177,7 @@ class ChooseLocationBloc
     final Emitter<ChooseLocationState> emit,
   ) async {
     if (state.isBusy) return;
-    await _saveAndEmit(
-      city: event.city,
-      country: event.country,
-      emit: emit,
-    );
+    await _saveAndEmit(city: event.city, country: event.country, emit: emit);
   }
 
   Future<void> _saveAndEmit({
@@ -199,10 +186,7 @@ class ChooseLocationBloc
     required final Emitter<ChooseLocationState> emit,
   }) async {
     emit(
-      state.copyWith(
-        status: ChooseLocationStatus.saving,
-        failureMessage: null,
-      ),
+      state.copyWith(status: ChooseLocationStatus.saving, failureMessage: null),
     );
 
     final result = await _saveLocation(
