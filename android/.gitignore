@@ -15,3 +15,10 @@ key.properties
 # CI-materialized service accounts (written by scripts/ci_materialize_secrets.sh).
 fastlane-play-service-account.json
 firebase-service-account.json
+
+# Fastlane
+fastlane/report.xml
+fastlane/Preview.html
+fastlane/screenshots
+fastlane/test_output
+fastlane/README.md

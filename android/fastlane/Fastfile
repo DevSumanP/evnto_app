@@ -1,0 +1,43 @@
+default_platform(:android)
+
+platform :android do 
+  # dev -> Firebase App Distribution (APK). com.evnto.app.dev
+  desc "Distribute the development build to Firebase App Distribution"
+  lane :distribute_dev do
+    firebase_app_distribution(
+      app: ENV["FIREBASE_APP_ID_DEV"], # Firebase Android app id of com.evnto.app.dev
+      service_credentials_file: ENV["FIREBASE_SERVICE_ACCOUNT_PATH"] || "firebase-service-account.json",
+      android_artifact_type: "APK",
+      android_artifact_path: "../build/app/outputs/flutter-apk/app-development-release.apk",
+      groups: ENV["FIREBASE_TESTER_GROUPS"] || "internal-testers",
+      release_notes: ENV["RELEASE_NOTES"] || "Automated development build",
+    )
+  end
+
+  # staging -> Play Console internal testing track (AAB). com.evnto.app
+  desc "Upload the staging build to the Play Console internal testing track"
+  lane :deploy_staging do
+    upload_to_play_store(
+      track: "internal",
+      aab: "../build/app/outputs/bundle/stagingRelease/app-staging-release.aab",
+      release_status: "completed",
+      skip_upload_metadata: true,
+      skip_upload_images: true,
+      skip_upload_screenshots: true,
+    )
+  end
+
+  # main -> Play Console production track, 10% staged rollout (AAB). com.evnto.app
+  desc "Deploy the production build to the Play Console production track (10% rollout)"
+  lane :deploy_production do
+    upload_to_play_store(
+      track: "production",
+      aab: "../build/app/outputs/bundle/productionRelease/app-production-release.aab",
+      rollout: "0.1",
+      release_status: "inProgress",
+      skip_upload_metadata: true,
+      skip_upload_images: true,
+      skip_upload_screenshots: true,
+    )
+  end
+end

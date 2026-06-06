@@ -1,0 +1,8 @@
+# Play Console uploads (staging/production) authenticate with this service
+# account. The file is written by scripts/ci_materialize_secrets.sh into      
+# android/, and fastlane runs from android/, so the path is relative to here.
+
+json_key_file(ENV["PLAY_SERVICE_ACCOUNT_PATH"] || "fastlane-play-service-account.json")
+
+# Staging and production share one Play app (com.evnto.app), different tracks.
+package_name("com.evnto.app")
