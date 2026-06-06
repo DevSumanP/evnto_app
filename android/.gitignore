@@ -16,6 +16,10 @@ key.properties
 fastlane-play-service-account.json
 firebase-service-account.json
 
+# Local copies of the service-account JSONs used to seed GitHub Secrets.
+play_service_account_json.json
+firebase_service_account_json.json
+
 # Fastlane
 fastlane/report.xml
 fastlane/Preview.html
