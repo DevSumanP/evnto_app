@@ -104,16 +104,16 @@ class StorageService {
   String? getAuthToken() => _prefs.getString(_keyAuthToken);
 
   Future<void> setAuthToken(final String token) => _guardedWrite(
-        _keyAuthToken,
-        () => _prefs.setString(_keyAuthToken, token),
-      );
+    _keyAuthToken,
+    () => _prefs.setString(_keyAuthToken, token),
+  );
 
   String? getRefreshToken() => _prefs.getString(_keyRefreshToken);
 
   Future<void> setRefreshToken(final String token) => _guardedWrite(
-        _keyRefreshToken,
-        () => _prefs.setString(_keyRefreshToken, token),
-      );
+    _keyRefreshToken,
+    () => _prefs.setString(_keyRefreshToken, token),
+  );
 
   /// Remove both auth and refresh tokens. Used on logout and 401.
   Future<void> clearTokens() async {
@@ -165,9 +165,9 @@ class StorageService {
   bool get isOnboardingDone => _prefs.getBool(_keyOnboardingDone) ?? false;
 
   Future<void> setOnboardingDone({final bool done = true}) => _guardedWrite(
-        _keyOnboardingDone,
-        () => _prefs.setBool(_keyOnboardingDone, done),
-      );
+    _keyOnboardingDone,
+    () => _prefs.setBool(_keyOnboardingDone, done),
+  );
 
   // ---------------------------------------------------------------------------
   // User location
@@ -217,9 +217,9 @@ class StorageService {
   String? getLanguageCode() => _prefs.getString(_keyLanguageCode);
 
   Future<void> setLanguageCode(final String code) => _guardedWrite(
-        _keyLanguageCode,
-        () => _prefs.setString(_keyLanguageCode, code),
-      );
+    _keyLanguageCode,
+    () => _prefs.setString(_keyLanguageCode, code),
+  );
 
   // ---------------------------------------------------------------------------
   // Internals

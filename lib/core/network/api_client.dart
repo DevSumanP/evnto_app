@@ -15,7 +15,7 @@ import 'dio_client.dart';
 /// HTTP client used by repositories and data sources.
 class ApiClient {
   ApiClient({final DioClient? dioClient})
-      : _dioClient = dioClient ?? DioClient.instance;
+    : _dioClient = dioClient ?? DioClient.instance;
 
   final DioClient _dioClient;
 
@@ -29,14 +29,13 @@ class ApiClient {
     final Options? options,
     final CancelToken? cancelToken,
     final ProgressCallback? onReceiveProgress,
-  }) =>
-      dio.get<T>(
-        path,
-        queryParameters: queryParameters,
-        options: options,
-        cancelToken: cancelToken,
-        onReceiveProgress: onReceiveProgress,
-      );
+  }) => dio.get<T>(
+    path,
+    queryParameters: queryParameters,
+    options: options,
+    cancelToken: cancelToken,
+    onReceiveProgress: onReceiveProgress,
+  );
 
   Future<Response<T>> post<T>(
     final String path, {
@@ -46,16 +45,15 @@ class ApiClient {
     final CancelToken? cancelToken,
     final ProgressCallback? onSendProgress,
     final ProgressCallback? onReceiveProgress,
-  }) =>
-      dio.post<T>(
-        path,
-        data: data,
-        queryParameters: queryParameters,
-        options: options,
-        cancelToken: cancelToken,
-        onSendProgress: onSendProgress,
-        onReceiveProgress: onReceiveProgress,
-      );
+  }) => dio.post<T>(
+    path,
+    data: data,
+    queryParameters: queryParameters,
+    options: options,
+    cancelToken: cancelToken,
+    onSendProgress: onSendProgress,
+    onReceiveProgress: onReceiveProgress,
+  );
 
   Future<Response<T>> put<T>(
     final String path, {
@@ -65,16 +63,15 @@ class ApiClient {
     final CancelToken? cancelToken,
     final ProgressCallback? onSendProgress,
     final ProgressCallback? onReceiveProgress,
-  }) =>
-      dio.put<T>(
-        path,
-        data: data,
-        queryParameters: queryParameters,
-        options: options,
-        cancelToken: cancelToken,
-        onSendProgress: onSendProgress,
-        onReceiveProgress: onReceiveProgress,
-      );
+  }) => dio.put<T>(
+    path,
+    data: data,
+    queryParameters: queryParameters,
+    options: options,
+    cancelToken: cancelToken,
+    onSendProgress: onSendProgress,
+    onReceiveProgress: onReceiveProgress,
+  );
 
   Future<Response<T>> patch<T>(
     final String path, {
@@ -84,16 +81,15 @@ class ApiClient {
     final CancelToken? cancelToken,
     final ProgressCallback? onSendProgress,
     final ProgressCallback? onReceiveProgress,
-  }) =>
-      dio.patch<T>(
-        path,
-        data: data,
-        queryParameters: queryParameters,
-        options: options,
-        cancelToken: cancelToken,
-        onSendProgress: onSendProgress,
-        onReceiveProgress: onReceiveProgress,
-      );
+  }) => dio.patch<T>(
+    path,
+    data: data,
+    queryParameters: queryParameters,
+    options: options,
+    cancelToken: cancelToken,
+    onSendProgress: onSendProgress,
+    onReceiveProgress: onReceiveProgress,
+  );
 
   Future<Response<T>> delete<T>(
     final String path, {
@@ -101,14 +97,13 @@ class ApiClient {
     final Map<String, dynamic>? queryParameters,
     final Options? options,
     final CancelToken? cancelToken,
-  }) =>
-      dio.delete<T>(
-        path,
-        data: data,
-        queryParameters: queryParameters,
-        options: options,
-        cancelToken: cancelToken,
-      );
+  }) => dio.delete<T>(
+    path,
+    data: data,
+    queryParameters: queryParameters,
+    options: options,
+    cancelToken: cancelToken,
+  );
 
   /// Multipart upload. [formData] must already include any file parts.
   Future<Response<T>> upload<T>(
@@ -118,15 +113,14 @@ class ApiClient {
     final Options? options,
     final CancelToken? cancelToken,
     final ProgressCallback? onSendProgress,
-  }) =>
-      dio.post<T>(
-        path,
-        data: formData,
-        queryParameters: queryParameters,
-        options: options,
-        cancelToken: cancelToken,
-        onSendProgress: onSendProgress,
-      );
+  }) => dio.post<T>(
+    path,
+    data: formData,
+    queryParameters: queryParameters,
+    options: options,
+    cancelToken: cancelToken,
+    onSendProgress: onSendProgress,
+  );
 
   /// Download to [savePath]. Treat [savePath] as untrusted: validate it
   /// (no path traversal, target is writable) before calling this.
@@ -139,15 +133,14 @@ class ApiClient {
     final bool deleteOnError = true,
     final String lengthHeader = Headers.contentLengthHeader,
     final Options? options,
-  }) =>
-      dio.download(
-        urlPath,
-        savePath,
-        onReceiveProgress: onReceiveProgress,
-        queryParameters: queryParameters,
-        cancelToken: cancelToken,
-        deleteOnError: deleteOnError,
-        lengthHeader: lengthHeader,
-        options: options,
-      );
+  }) => dio.download(
+    urlPath,
+    savePath,
+    onReceiveProgress: onReceiveProgress,
+    queryParameters: queryParameters,
+    cancelToken: cancelToken,
+    deleteOnError: deleteOnError,
+    lengthHeader: lengthHeader,
+    options: options,
+  );
 }

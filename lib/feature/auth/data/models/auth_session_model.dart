@@ -53,12 +53,12 @@ class AuthSessionModel {
   }
 
   AuthSession toEntity() => AuthSession(
-        accessToken: accessToken,
-        refreshToken: refreshToken,
-        expiresIn: Duration(seconds: expiresIn),
-        userId: userId,
-        email: email,
-      );
+    accessToken: accessToken,
+    refreshToken: refreshToken,
+    expiresIn: Duration(seconds: expiresIn),
+    userId: userId,
+    email: email,
+  );
 
   static String? _asString(final Object? value) =>
       value is String ? value : null;

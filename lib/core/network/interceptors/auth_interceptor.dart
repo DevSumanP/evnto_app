@@ -37,9 +37,9 @@ class AuthInterceptor extends Interceptor {
     required final StorageService storage,
     required final AuthSessionService session,
     required final Dio dio,
-  })  : _storage = storage,
-        _session = session,
-        _dio = dio;
+  }) : _storage = storage,
+       _session = session,
+       _dio = dio;
 
   /// Set `options.extra[AuthInterceptor.skipAuthExtraKey] = true` on a
   /// request (for example, login) to skip the bearer-token attachment.
@@ -121,8 +121,9 @@ class AuthInterceptor extends Interceptor {
           'Bearer $newToken';
       err.requestOptions.extra[_retriedKey] = true;
 
-      final Response<dynamic> response =
-          await _dio.fetch<dynamic>(err.requestOptions);
+      final Response<dynamic> response = await _dio.fetch<dynamic>(
+        err.requestOptions,
+      );
       handler.resolve(response);
     } on RefreshTokenException {
       // Service has already cleared tokens and emitted SessionExpired.

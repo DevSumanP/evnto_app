@@ -5,8 +5,7 @@ import 'package:tap_app/feature/tickets/domain/entities/ticket_entity.dart';
 import 'package:tap_app/feature/tickets/domain/repositories/ticket_repository.dart';
 
 @lazySingleton
-class GetMyTicketsUseCase
-    implements UseCase<List<TicketEntity>, NoParams> {
+class GetMyTicketsUseCase implements UseCase<List<TicketEntity>, NoParams> {
   const GetMyTicketsUseCase(this._repository);
 
   final TicketRepository _repository;

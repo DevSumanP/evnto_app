@@ -19,21 +19,12 @@ class AppRouteObserver extends AutoRouteObserver {
     final Route<dynamic> route,
     final Route<dynamic>? previousRoute,
   ) {
-    _logger.info(
-      '${_name(previousRoute)} → ${_name(route)}',
-      category: 'Nav',
-    );
+    _logger.info('${_name(previousRoute)} → ${_name(route)}', category: 'Nav');
   }
 
   @override
-  void didPop(
-    final Route<dynamic> route,
-    final Route<dynamic>? previousRoute,
-  ) {
-    _logger.info(
-      '${_name(route)} ← ${_name(previousRoute)}',
-      category: 'Nav',
-    );
+  void didPop(final Route<dynamic> route, final Route<dynamic>? previousRoute) {
+    _logger.info('${_name(route)} ← ${_name(previousRoute)}', category: 'Nav');
   }
 
   @override

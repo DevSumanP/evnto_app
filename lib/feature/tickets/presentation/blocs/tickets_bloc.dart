@@ -66,23 +66,26 @@ class TicketsBloc extends BaseBloc<TicketsEvent, TicketsState> {
   Future<void> _onRefreshed(
     final TicketsRefreshed e,
     final Emitter<TicketsState> emit,
-  ) =>
-      _load(emit);
+  ) => _load(emit);
 
   Future<void> _load(final Emitter<TicketsState> emit) async {
     emit(state.copyWith(status: TicketsStatus.loading, error: null));
 
     final result = await _getMyTickets(const NoParams());
     result.fold(
-      (failure) => emit(state.copyWith(
-        status: TicketsStatus.failure,
-        error: getErrorMessage(failure),
-      )),
-      (tickets) => emit(state.copyWith(
-        status: TicketsStatus.loaded,
-        tickets: tickets,
-        error: null,
-      )),
+      (failure) => emit(
+        state.copyWith(
+          status: TicketsStatus.failure,
+          error: getErrorMessage(failure),
+        ),
+      ),
+      (tickets) => emit(
+        state.copyWith(
+          status: TicketsStatus.loaded,
+          tickets: tickets,
+          error: null,
+        ),
+      ),
     );
   }
 }

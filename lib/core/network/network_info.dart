@@ -40,8 +40,8 @@ class NetworkInfo {
   ///   - the active interface (Wi-Fi, mobile, etc.)
   ///   - real reachability (the interface actually reaches the internet)
   Future<bool> get isConnected async {
-    final List<ConnectivityResult> results =
-        await _connectivity.checkConnectivity();
+    final List<ConnectivityResult> results = await _connectivity
+        .checkConnectivity();
     if (_isOffline(results)) {
       _cachedReachable = false;
       _cachedReachableAt = DateTime.now();
@@ -67,8 +67,8 @@ class NetworkInfo {
 
   /// The kind of active connection, or `none` when offline.
   Future<NetworkConnectionType> get connectionType async {
-    final List<ConnectivityResult> results =
-        await _connectivity.checkConnectivity();
+    final List<ConnectivityResult> results = await _connectivity
+        .checkConnectivity();
     if (results.contains(ConnectivityResult.wifi)) {
       return NetworkConnectionType.wifi;
     }

@@ -174,10 +174,7 @@ class HomeBloc extends BaseBloc<HomeEvent, HomeState> {
     final Emitter<HomeState> emit,
   ) async {
     emit(
-      state.copyWith(
-        popularStatus: SectionStatus.loading,
-        popularError: null,
-      ),
+      state.copyWith(popularStatus: SectionStatus.loading, popularError: null),
     );
     final result = await _getPopular(const NoParams());
     result.fold(
@@ -190,10 +187,7 @@ class HomeBloc extends BaseBloc<HomeEvent, HomeState> {
       (events) {
         _favorites.hydrateFromEvents(events);
         emit(
-          state.copyWith(
-            popularStatus: SectionStatus.loaded,
-            popular: events,
-          ),
+          state.copyWith(popularStatus: SectionStatus.loaded, popular: events),
         );
       },
     );
@@ -222,9 +216,7 @@ class HomeBloc extends BaseBloc<HomeEvent, HomeState> {
         suggestedError: null,
       ),
     );
-    final result = await _getSuggested(
-      GetSuggestedEventParams(city: city),
-    );
+    final result = await _getSuggested(GetSuggestedEventParams(city: city));
     result.fold(
       (failure) => emit(
         state.copyWith(

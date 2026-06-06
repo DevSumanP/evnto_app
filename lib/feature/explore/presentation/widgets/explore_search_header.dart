@@ -170,6 +170,9 @@ class _LocationPill extends StatelessWidget {
   }
 }
 
+// Used by the filter button in the search header (currently disabled, see the
+// commented usage above). Suppress the unused warning until it is re-enabled.
+// ignore: unused_element
 class _FilterButton extends StatelessWidget {
   const _FilterButton({required this.count, required this.onTap});
 

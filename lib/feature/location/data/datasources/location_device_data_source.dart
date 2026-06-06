@@ -62,7 +62,8 @@ class LocationDeviceDataSourceImpl implements LocationDeviceDataSource {
     );
     if (placemarks.isEmpty) {
       throw const BusinessRuleException(
-        message: "Could not determine your city. Please pick one from the list.",
+        message:
+            "Could not determine your city. Please pick one from the list.",
         code: 'LOCATION_LOOKUP_FAILED',
       );
     }
@@ -75,7 +76,8 @@ class LocationDeviceDataSourceImpl implements LocationDeviceDataSource {
     ]);
     if (city.isEmpty) {
       throw const BusinessRuleException(
-        message: "Could not determine your city. Please pick one from the list.",
+        message:
+            "Could not determine your city. Please pick one from the list.",
         code: 'LOCATION_LOOKUP_FAILED',
       );
     }

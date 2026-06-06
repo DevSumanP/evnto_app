@@ -16,8 +16,7 @@ class GetTicketQrParams extends Equatable {
 }
 
 @lazySingleton
-class GetTicketQrUseCase
-    implements UseCase<TicketQREntity, GetTicketQrParams> {
+class GetTicketQrUseCase implements UseCase<TicketQREntity, GetTicketQrParams> {
   const GetTicketQrUseCase(this._repo);
 
   final TicketRepository _repo;

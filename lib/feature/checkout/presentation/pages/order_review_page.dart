@@ -51,9 +51,8 @@ class _OrderReviewView extends StatelessWidget {
         if (s.isReady) {
           final result = await Navigator.of(ctx).push<KhaltiResult>(
             MaterialPageRoute<KhaltiResult>(
-              builder: (_) => KhaltiWebviewPage(
-                paymentUrl: s.session!.paymentUrl,
-              ),
+              builder: (_) =>
+                  KhaltiWebviewPage(paymentUrl: s.session!.paymentUrl),
               fullscreenDialog: true,
             ),
           );
@@ -61,14 +60,14 @@ class _OrderReviewView extends StatelessWidget {
           if (!ctx.mounted) return;
 
           if (result?.outcome == KhaltiOutcome.completed) {
-            ctx.read<CheckoutBloc>().add(CheckoutEvent.verifyRequested(
-              orderId: s.session!.orderId,
-              pidx: result!.pidx ?? s.session!.pidx,
-            ));
-          } else {
             ctx.read<CheckoutBloc>().add(
-              const CheckoutEvent.paymentCanceled(),
+              CheckoutEvent.verifyRequested(
+                orderId: s.session!.orderId,
+                pidx: result!.pidx ?? s.session!.pidx,
+              ),
             );
+          } else {
+            ctx.read<CheckoutBloc>().add(const CheckoutEvent.paymentCanceled());
           }
         }
 

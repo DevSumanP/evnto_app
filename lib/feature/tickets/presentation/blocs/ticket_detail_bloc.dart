@@ -76,15 +76,15 @@ class TicketDetailBloc extends BaseBloc<TicketDetailEvent, TicketDetailState> {
 
     final result = await _getTicketQr(GetTicketQrParams(ticketId: ticketId));
     result.fold(
-      (failure) => emit(state.copyWith(
-        status: TicketDetailStatus.failure,
-        error: getErrorMessage(failure),
-      )),
-      (qr) => emit(state.copyWith(
-        status: TicketDetailStatus.loaded,
-        qr: qr,
-        error: null,
-      )),
+      (failure) => emit(
+        state.copyWith(
+          status: TicketDetailStatus.failure,
+          error: getErrorMessage(failure),
+        ),
+      ),
+      (qr) => emit(
+        state.copyWith(status: TicketDetailStatus.loaded, qr: qr, error: null),
+      ),
     );
   }
 }

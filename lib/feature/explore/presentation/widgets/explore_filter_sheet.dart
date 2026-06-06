@@ -62,8 +62,7 @@ class _FilterSheetState extends State<_FilterSheet> {
     (widget.initial.priceMaxPaisa ?? (_kMaxPriceRupees * 100)) / 100,
   );
 
-  bool get _priceTouched =>
-      _price.start > 0 || _price.end < _kMaxPriceRupees;
+  bool get _priceTouched => _price.start > 0 || _price.end < _kMaxPriceRupees;
 
   @override
   Widget build(final BuildContext context) {

@@ -78,10 +78,7 @@ Future<ExploreLocationChoice?> showExploreLocationPicker(
               const SizedBox(height: 12),
               ListTile(
                 contentPadding: EdgeInsets.zero,
-                leading: const Icon(
-                  Icons.my_location,
-                  color: _kAccentOrange,
-                ),
+                leading: const Icon(Icons.my_location, color: _kAccentOrange),
                 title: Text(
                   'Use my current location',
                   style: AppTextStyles.bodyMedium.copyWith(
@@ -89,9 +86,9 @@ Future<ExploreLocationChoice?> showExploreLocationPicker(
                     fontWeight: FontWeight.w600,
                   ),
                 ),
-                onTap: () => Navigator.of(sheetCtx).pop(
-                  const ExploreLocationChoice.currentLocation(),
-                ),
+                onTap: () => Navigator.of(
+                  sheetCtx,
+                ).pop(const ExploreLocationChoice.currentLocation()),
               ),
               const Divider(height: 8),
               ...kNepalCities.entries.map(

@@ -124,9 +124,7 @@ class AuthSessionService {
     try {
       final Response<dynamic> res = await refreshDio.post<dynamic>(
         ApiEndpoints.refreshToken,
-        queryParameters: const <String, dynamic>{
-          'grant_type': 'refresh_token',
-        },
+        queryParameters: const <String, dynamic>{'grant_type': 'refresh_token'},
         data: <String, dynamic>{'refresh_token': refreshToken},
       );
 
