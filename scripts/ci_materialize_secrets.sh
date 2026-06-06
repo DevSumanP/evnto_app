@@ -59,6 +59,18 @@ else
   fail "$ENV_VAR is not set — the app cannot build without its .env"
 fi
 
+# pubspec.yaml lists .env.development/.staging/.production as assets, and Flutter
+# bundles every declared asset no matter which flavor is built. Only the target
+# flavor gets real values above; create empty placeholders for the other two so
+# asset bundling doesn't fail. The app loads only its own flavor's .env at
+# runtime, so these empty files are never read.
+for other in development staging production; do
+  if [ ! -f ".env.${other}" ]; then
+    : > ".env.${other}"
+    note "created empty placeholder .env.${other}"
+  fi
+done
+
 # ── 2. google-services.json (one Firebase project, same file all flavors) ─────
 if [ -n "${GOOGLE_SERVICES:-}" ]; then
   dest="android/app/src/${FLAVOR}/google-services.json"
