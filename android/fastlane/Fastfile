@@ -4,13 +4,18 @@ platform :android do
   # dev -> Firebase App Distribution (APK). com.evnto.app.dev
   desc "Distribute the development build to Firebase App Distribution"
   lane :distribute_dev do
+    # Group alias from Firebase Console. ENV may arrive as "" (unset repo var),
+    # so treat blank as "use the default" — Ruby's || only catches nil, not "".
+    groups = ENV["FIREBASE_TESTER_GROUPS"].to_s.strip
+    groups = "internal-testers" if groups.empty?
+
     firebase_app_distribution(
       app: ENV["FIREBASE_APP_ID_DEV"], # Firebase Android app id of com.evnto.app.dev
       service_credentials_file: "firebase-service-account.json",
       android_artifact_type: "APK",
       android_artifact_path: "../build/app/outputs/flutter-apk/app-development-release.apk",
-      groups: ENV["FIREBASE_TESTER_GROUPS"] || "internal-testers",
-      release_notes: ENV["RELEASE_NOTES"] || "Automated development build",
+      groups: groups,
+      release_notes: ENV["RELEASE_NOTES"].to_s.empty? ? "Automated development build" : ENV["RELEASE_NOTES"],
     )
   end
 
