@@ -32,13 +32,18 @@ concurrency:
   cancel-in-progress: false
 
 env:
-  FLUTTER_VERSION: "3.35.5"
+  # Match the local toolchain: 3.35.7 resolves the Kotlin Gradle plugin to 2.3.x,
+  # which can read the 2.3 metadata that current plugins (google_maps_flutter,
+  # device_info_plus, ...) ship. 3.35.5 fell back to Kotlin 2.1.0 and failed.
+  FLUTTER_VERSION: "3.35.7"
 
 jobs:
   deploy:
     name: Build & Deploy
     runs-on: ubuntu-latest
-    timeout-minutes: 30
+    # A cold runner downloads the NDK, SDK platforms, and CMake during the first
+    # Gradle build, which alone can take ~13 min. 45 gives that headroom.
+    timeout-minutes: 45
     steps:
       - name: Checkout
         uses: actions/checkout@v5
