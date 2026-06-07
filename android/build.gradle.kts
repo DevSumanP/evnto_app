@@ -8,15 +8,15 @@ allprojects {
     }
 
     // Some plugins (e.g. screen_brightness_android 2.1.5) drag in a newer
-    // kotlin-stdlib than this project's Kotlin compiler (2.3.0 in
-    // settings.gradle.kts). The version mismatch makes the compiler crash on a
-    // metadata check. Pin the stdlib to the compiler's version everywhere —
-    // nothing here can use newer stdlib APIs anyway, so this is safe.
+    // kotlin-stdlib than this project's Kotlin compiler (2.1.0). A 2.1 compiler
+    // cannot read stdlib metadata newer than itself, so it crashes on the
+    // metadata check. Pin the stdlib down to the compiler's version everywhere —
+    // nothing here uses newer stdlib APIs anyway, so this is safe.
     configurations.all {
         resolutionStrategy {
-            force("org.jetbrains.kotlin:kotlin-stdlib:2.3.0")
-            force("org.jetbrains.kotlin:kotlin-stdlib-jdk7:2.3.0")
-            force("org.jetbrains.kotlin:kotlin-stdlib-jdk8:2.3.0")
+            force("org.jetbrains.kotlin:kotlin-stdlib:2.1.0")
+            force("org.jetbrains.kotlin:kotlin-stdlib-jdk7:2.1.0")
+            force("org.jetbrains.kotlin:kotlin-stdlib-jdk8:2.1.0")
         }
     }
 }
@@ -36,7 +36,7 @@ subprojects {
 }
 
 // Some older plugins (e.g. posthog_flutter) pin their Kotlin language/api
-// version to 1.6, which the Kotlin 2.3 compiler no longer supports (min 2.0).
+// version to 1.6, which the Kotlin 2.1 compiler no longer supports (min 2.0).
 // configureEach is lazy (runs at task realization, after the plugin sets its
 // value), so it overrides anything below 2.0 without needing afterEvaluate.
 subprojects {
