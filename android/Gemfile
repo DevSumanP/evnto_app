@@ -2,6 +2,11 @@ source  "https://rubygems.org"
 
 gem "fastlane"
 
+# Fastlane loads its Play Store actions at startup, which pull in the Google API
+# gems -> representable, and representable needs multi_json at runtime. It isn't
+# pulled into the bundle on its own, so declare it here or fastlane won't start.
+gem "multi_json"
+
 plugins_path = File.join(File.dirname(__FILE__), "fastlane",
 "Pluginfile")
 eval_gemfile(plugins_path) if File.exist?(plugins_path)
