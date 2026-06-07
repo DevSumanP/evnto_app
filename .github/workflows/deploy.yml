@@ -1,77 +1,52 @@
-# ---------------------------------------------------------------------------
-# Deploy pipeline (Android)
+# Deploy pipeline (Android). Push a long-lived branch -> build its flavor -> ship it.
 #
-# Every push to a long-lived branch ships the app to that branch's destination:
+#   branch    flavor        artifact   destination
+#   dev       development   APK        Firebase App Distribution
+#   staging   staging       AAB        Play Console (internal track)
+#   main      production    AAB        Play Console (production, 10% rollout)
 #
-#   branch    flavor        applicationId      artifact   destination
-#   ------    ------        -------------      --------   -----------
-#   dev       development   com.evnto.app.dev  APK        Firebase App Distribution
-#   staging   staging       com.evnto.app      AAB        Play Console - internal track
-#   main      production    com.evnto.app      AAB        Play Console - production (10% rollout)
-#
-# Flow: checkout -> resolve target from branch -> Java + Flutter -> pub get ->
-# codegen -> materialize secrets into files -> flutter build -> fastlane upload.
-#
-# Secrets are stored in GitHub Secrets as strings. scripts/ci_materialize_secrets.sh
-# writes them to the files the build tools actually read (.env, google-services.json,
-# upload keystore, service accounts). See docs/CICD.md for the full secret list and
-# the one-time Play/Firebase setup.
-# ---------------------------------------------------------------------------
+# GitHub Secrets are written to on-disk config files by
+# scripts/ci_materialize_secrets.sh. See docs/CICD.md for the full secret list.
 name: Deploy
 
 on:
   push:
     branches: [dev, staging, main]
-  # Lets you re-run a deploy for the current branch from the Actions tab.
   workflow_dispatch:
 
-# One deploy per branch at a time, and never cancel a run mid-upload or a store
-# could be left in a half-published state.
+# One deploy per branch; never cancel mid-upload (a store could be left half-published).
 concurrency:
   group: deploy-${{ github.ref }}
   cancel-in-progress: false
 
 env:
-  # Match the local toolchain: 3.35.7 resolves the Kotlin Gradle plugin to 2.3.x,
-  # which can read the 2.3 metadata that current plugins (google_maps_flutter,
-  # device_info_plus, ...) ship. 3.35.5 fell back to Kotlin 2.1.0 and failed.
+  # 3.35.7 resolves the Kotlin plugin to 2.3.x, needed to read the 2.3 bytecode
+  # current plugins (google_maps_flutter, ...) ship. 3.35.5 fell back to 2.1.0.
   FLUTTER_VERSION: "3.35.7"
 
 jobs:
   deploy:
     name: Build & Deploy
     runs-on: ubuntu-latest
-    # A cold runner downloads the NDK, SDK platforms, and CMake during the first
-    # Gradle build, which alone can take ~13 min. 45 gives that headroom.
-    timeout-minutes: 45
+    timeout-minutes: 45 # cold runner downloads NDK/SDK/CMake on first build (~13 min)
     steps:
-      - name: Checkout
-        uses: actions/checkout@v5
+      - uses: actions/checkout@v5
 
-      # Map the branch to its flavor, entrypoint, build artifact, and lane.
-      # Every later step reads these via steps.target.outputs.*. An unmatched
-      # branch fails loudly instead of building the wrong thing.
-      - name: Resolve target from branch
-        id: target
+      # Branch -> flavor, artifact type (apk/appbundle), and Fastlane lane.
+      - name: Resolve target
+        id: t
         run: |
           case "${{ github.ref_name }}" in
-            dev)
-              flavor=development; entry=lib/main_development.dart; artifact=apk;       lane=distribute_dev;   dest="Firebase App Distribution" ;;
-            staging)
-              flavor=staging;     entry=lib/main_staging.dart;     artifact=appbundle; lane=deploy_staging;    dest="Play Console - internal" ;;
-            main)
-              flavor=production;  entry=lib/main_production.dart;  artifact=appbundle; lane=deploy_production; dest="Play Console - production (10%)" ;;
-            *)
-              echo "::error::Branch '${{ github.ref_name }}' has no deploy target." ; exit 1 ;;
+            dev)     flavor=development; artifact=apk;       lane=distribute_dev   ;;
+            staging) flavor=staging;     artifact=appbundle; lane=deploy_staging    ;;
+            main)    flavor=production;  artifact=appbundle; lane=deploy_production ;;
+            *) echo "::error::Branch '${{ github.ref_name }}' has no deploy target."; exit 1 ;;
           esac
           {
             echo "flavor=$flavor"
-            echo "entry=$entry"
             echo "artifact=$artifact"
             echo "lane=$lane"
-            echo "dest=$dest"
           } >> "$GITHUB_OUTPUT"
-          echo "Resolved '${{ github.ref_name }}' -> $flavor build ($artifact) -> $dest [lane: $lane]"
 
       - name: Set up Java
         uses: actions/setup-java@v4
@@ -86,19 +61,14 @@ jobs:
           channel: stable
           cache: true
 
-      - name: Install dependencies
-        run: flutter pub get
+      - name: Install deps & generate code
+        run: |
+          flutter pub get
+          dart run build_runner build --delete-conflicting-outputs
 
-      # freezed / injectable / auto_route / json_serializable outputs are
-      # gitignored, so they must be regenerated before the build.
-      - name: Run code generation
-        run: dart run build_runner build --delete-conflicting-outputs
-
-      # Turn the GitHub Secrets (env vars below) into the on-disk files the
-      # build and Fastlane read: .env.<flavor>, google-services.json, the upload
-      # keystore + key.properties, secrets.properties, and the service accounts.
+      # Write GitHub Secrets into the config files the build and Fastlane read.
       - name: Materialize secrets
-        run: bash scripts/ci_materialize_secrets.sh ${{ steps.target.outputs.flavor }}
+        run: bash scripts/ci_materialize_secrets.sh ${{ steps.t.outputs.flavor }}
         env:
           ENV_DEVELOPMENT: ${{ secrets.ENV_DEVELOPMENT }}
           ENV_STAGING: ${{ secrets.ENV_STAGING }}
@@ -112,13 +82,12 @@ jobs:
           PLAY_SERVICE_ACCOUNT_JSON: ${{ secrets.PLAY_SERVICE_ACCOUNT_JSON }}
           FIREBASE_SERVICE_ACCOUNT_JSON: ${{ secrets.FIREBASE_SERVICE_ACCOUNT_JSON }}
 
-      # versionCode comes from the run number (always increasing); versionName
-      # stays as declared in pubspec.yaml.
-      - name: Build ${{ steps.target.outputs.artifact }} (${{ steps.target.outputs.flavor }})
+      # versionCode = run number (always increasing); versionName from pubspec.
+      - name: Build (${{ steps.t.outputs.flavor }})
         run: >
-          flutter build ${{ steps.target.outputs.artifact }} --release
-          --flavor ${{ steps.target.outputs.flavor }}
-          -t ${{ steps.target.outputs.entry }}
+          flutter build ${{ steps.t.outputs.artifact }} --release
+          --flavor ${{ steps.t.outputs.flavor }}
+          -t lib/main_${{ steps.t.outputs.flavor }}.dart
           --build-number=${{ github.run_number }}
         env:
           MAPS_API_KEY: ${{ secrets.MAPS_API_KEY }}
@@ -130,42 +99,22 @@ jobs:
           bundler-cache: true
           working-directory: android
 
-      - name: Deploy via Fastlane (${{ steps.target.outputs.lane }})
+      - name: Upload via Fastlane
         working-directory: android
-        run: bundle exec fastlane ${{ steps.target.outputs.lane }}
+        run: bundle exec fastlane ${{ steps.t.outputs.lane }}
         env:
           FIREBASE_APP_ID_DEV: ${{ secrets.FIREBASE_APP_ID_DEV }}
           FIREBASE_TESTER_GROUPS: ${{ vars.FIREBASE_TESTER_GROUPS }}
           RELEASE_NOTES: "Build ${{ github.run_number }} (${{ github.sha }})"
 
-      # Keep the signed artifact attached to the run for traceability and manual
-      # download. Only one of the two paths exists per flavor; ignore the other.
-      - name: Archive build artifact
+      # Keep the signed artifact on the run page. Only one path exists per flavor.
+      - name: Archive artifact
         if: success()
         uses: actions/upload-artifact@v4
         with:
-          name: ${{ steps.target.outputs.flavor }}-${{ github.run_number }}
+          name: ${{ steps.t.outputs.flavor }}-${{ github.run_number }}
           path: |
-            build/app/outputs/flutter-apk/app-${{ steps.target.outputs.flavor }}-release.apk
-            build/app/outputs/bundle/${{ steps.target.outputs.flavor }}Release/app-${{ steps.target.outputs.flavor }}-release.aab
+            build/app/outputs/flutter-apk/app-${{ steps.t.outputs.flavor }}-release.apk
+            build/app/outputs/bundle/${{ steps.t.outputs.flavor }}Release/app-${{ steps.t.outputs.flavor }}-release.aab
           if-no-files-found: ignore
           retention-days: 14
-
-      # A readable summary on the run page (Actions -> run -> Summary).
-      - name: Write run summary
-        if: always()
-        run: |
-          {
-            echo "### Deploy — ${{ steps.target.outputs.flavor }}"
-            echo ""
-            echo "| Field | Value |"
-            echo "| --- | --- |"
-            echo "| Branch | \`${{ github.ref_name }}\` |"
-            echo "| Flavor | ${{ steps.target.outputs.flavor }} |"
-            echo "| Destination | ${{ steps.target.outputs.dest }} |"
-            echo "| Lane | \`${{ steps.target.outputs.lane }}\` |"
-            echo "| Artifact | ${{ steps.target.outputs.artifact }} |"
-            echo "| Version code | ${{ github.run_number }} |"
-            echo "| Commit | \`${{ github.sha }}\` |"
-            echo "| Result | ${{ job.status }} |"
-          } >> "$GITHUB_STEP_SUMMARY"

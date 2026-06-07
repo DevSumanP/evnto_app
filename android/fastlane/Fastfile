@@ -6,7 +6,7 @@ platform :android do
   lane :distribute_dev do
     firebase_app_distribution(
       app: ENV["FIREBASE_APP_ID_DEV"], # Firebase Android app id of com.evnto.app.dev
-      service_credentials_file: ENV["FIREBASE_SERVICE_ACCOUNT_PATH"] || "firebase-service-account.json",
+      service_credentials_file: "firebase-service-account.json",
       android_artifact_type: "APK",
       android_artifact_path: "../build/app/outputs/flutter-apk/app-development-release.apk",
       groups: ENV["FIREBASE_TESTER_GROUPS"] || "internal-testers",
