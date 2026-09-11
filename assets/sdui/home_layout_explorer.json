@@ -1,0 +1,96 @@
+{
+  "schemaVersion": 1,
+  "segment": "explorer",
+  "sections": [
+    {
+      "type": "rail",
+      "title": "Picked for you",
+      "style": "popular",
+      "items": [
+        {
+          "id": "evt-acoustic",
+          "title": "Acoustic Sessions",
+          "category": "Music",
+          "is_featured": false,
+          "starts_at": "2026-06-18T19:00:00Z",
+          "venue": { "name": "Thamel Stage", "city": "Thamel", "country": "Nepal" },
+          "tiers": [ { "price_paisa": 70000 } ]
+        },
+        {
+          "id": "evt-flutterdevs",
+          "title": "Flutter Devs Nepal",
+          "category": "Tech",
+          "is_featured": false,
+          "starts_at": "2026-06-21T15:00:00Z",
+          "venue": { "name": "Lalitpur Hub", "city": "Lalitpur", "country": "Nepal" },
+          "tiers": [ { "price_paisa": 0 } ]
+        }
+      ]
+    },
+    {
+      "type": "list",
+      "title": "From your saved ♥",
+      "items": [
+        {
+          "id": "evt-rooftop",
+          "title": "Sunset Rooftop Session",
+          "category": "Music",
+          "is_featured": false,
+          "starts_at": "2026-06-18T17:00:00Z",
+          "venue": { "name": "Jhamsikhel Rooftop", "city": "Jhamsikhel", "country": "Nepal" },
+          "tiers": [ { "price_paisa": 80000 } ]
+        }
+      ]
+    },
+    {
+      "type": "rail",
+      "title": "This weekend near you",
+      "style": "upcoming",
+      "items": [
+        {
+          "id": "evt-craftmarket",
+          "title": "Food & Craft Market",
+          "category": "Food",
+          "is_featured": false,
+          "starts_at": "2026-06-14T11:00:00Z",
+          "venue": { "name": "Patan Square", "city": "Patan", "country": "Nepal" },
+          "tiers": [ { "price_paisa": 0 } ]
+        },
+        {
+          "id": "evt-openmic",
+          "title": "Comedy Open Mic",
+          "category": "Art",
+          "is_featured": false,
+          "starts_at": "2026-06-15T18:00:00Z",
+          "venue": { "name": "Jhamel Cafe", "city": "Jhamel", "country": "Nepal" },
+          "tiers": [ { "price_paisa": 30000 } ]
+        }
+      ]
+    },
+    {
+      "type": "rail",
+      "title": "Popular Now",
+      "style": "popular",
+      "items": [
+        {
+          "id": "evt-streetfood",
+          "title": "Street Food Fest",
+          "category": "Food",
+          "is_featured": true,
+          "starts_at": "2026-06-20T16:00:00Z",
+          "venue": { "name": "Patan Durbar", "city": "Patan", "country": "Nepal" },
+          "tiers": [ { "price_paisa": 0 } ]
+        },
+        {
+          "id": "evt-jazz",
+          "title": "Jazz Night Live",
+          "category": "Music",
+          "is_featured": false,
+          "starts_at": "2026-06-14T19:00:00Z",
+          "venue": { "name": "House of Music", "city": "Thamel", "country": "Nepal" },
+          "tiers": [ { "price_paisa": 50000 } ]
+        }
+      ]
+    }
+  ]
+}

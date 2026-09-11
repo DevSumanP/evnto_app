@@ -1,0 +1,371 @@
+{
+  "success": true,
+  "data": {
+    "schemaVersion": 1,
+    "segment": "newcomer",
+    "sections": [
+      {
+        "type": "hero",
+        "title": "👋 Welcome to Evnto",
+        "subtitle": "Discover concerts, meetups and festivals you'll love — near you.",
+        "ctaLabel": "Pick your interests"
+      },
+      {
+        "type": "interest_picker",
+        "title": "What are you into?",
+        "options": [
+          "Music",
+          "Art",
+          "Tech",
+          "Sports",
+          "Food"
+        ],
+        "selected": []
+      },
+      {
+        "type": "rail",
+        "title": "Popular Now",
+        "style": "popular",
+        "items": [
+          {
+            "id": "2a77863c-9e56-4e7b-a647-d398206dac95",
+            "title": "Newa Art & Mask Exhibition",
+            "category": "art",
+            "hero_image_url": "https://picsum.photos/seed/newa-art-mask-expo/800/450",
+            "starts_at": "2026-06-10T15:02:16.862948+00:00",
+            "ends_at": "2026-06-12T15:02:16.862948+00:00",
+            "is_featured": true,
+            "venue_id": "90097786-989f-4ab2-a140-a2ff9e36f1ed",
+            "venue": {
+              "city": "Bhaktapur",
+              "name": "Bhaktapur Durbar Square",
+              "address": "Bhaktapur",
+              "country": "Nepal"
+            },
+            "tiers": [
+              {
+                "price_paisa": 0
+              }
+            ]
+          },
+          {
+            "id": "283340b5-b717-4b85-a1d3-5a06a4ec3332",
+            "title": "Kathmandu Flutter Conf 2026",
+            "category": "tech",
+            "hero_image_url": "https://picsum.photos/seed/ktm-flutter-conf-2026/800/450",
+            "starts_at": "2026-06-15T15:02:16.862948+00:00",
+            "ends_at": "2026-06-15T23:02:16.862948+00:00",
+            "is_featured": true,
+            "venue_id": "692b3757-a871-4d7b-aea5-23d9da35b373",
+            "venue": {
+              "city": "Lalitpur",
+              "name": "Pulchowk Engineering Campus",
+              "address": "Pulchowk, Lalitpur",
+              "country": "Nepal"
+            },
+            "tiers": [
+              {
+                "price_paisa": 350000
+              },
+              {
+                "price_paisa": 60000
+              },
+              {
+                "price_paisa": 150000
+              }
+            ]
+          },
+          {
+            "id": "a77d467c-ec39-4b3a-9a4c-b79e49d03a0d",
+            "title": "Sajjan Raj Vaidya — Live in Kathmandu",
+            "category": "music",
+            "hero_image_url": "https://picsum.photos/seed/sajjan-raj-vaidya-ktm/800/450",
+            "starts_at": "2026-06-19T15:02:16.862948+00:00",
+            "ends_at": "2026-06-19T19:02:16.862948+00:00",
+            "is_featured": true,
+            "venue_id": "73f530d4-12a5-407b-b7be-9a80188329cd",
+            "venue": {
+              "city": "Kathmandu",
+              "name": "Tundikhel Open Ground",
+              "address": "Tundikhel, Kathmandu",
+              "country": "Nepal"
+            },
+            "tiers": [
+              {
+                "price_paisa": 500000
+              },
+              {
+                "price_paisa": 200000
+              },
+              {
+                "price_paisa": 80000
+              }
+            ]
+          },
+          {
+            "id": "4bff7b7a-33a2-4fc5-93f3-f33cb9d799c7",
+            "title": "Hyatt Food & Wine Festival",
+            "category": "food",
+            "hero_image_url": "https://picsum.photos/seed/hyatt-food-wine-fest/800/450",
+            "starts_at": "2026-07-03T15:02:16.862948+00:00",
+            "ends_at": "2026-07-04T21:02:16.862948+00:00",
+            "is_featured": true,
+            "venue_id": "eb7c48ff-0864-462c-913d-76bc85c71cad",
+            "venue": {
+              "city": "Kathmandu",
+              "name": "Hyatt Regency Lawns",
+              "address": "Taragaon, Boudha, Kathmandu",
+              "country": "Nepal"
+            },
+            "tiers": [
+              {
+                "price_paisa": 900000
+              },
+              {
+                "price_paisa": 450000
+              },
+              {
+                "price_paisa": 250000
+              }
+            ]
+          },
+          {
+            "id": "4e74d594-ab7d-4729-bf23-d4c6f6e72735",
+            "title": "Kathmandu Marathon 2026",
+            "category": "sports",
+            "hero_image_url": "https://picsum.photos/seed/kathmandu-marathon-2026/800/450",
+            "starts_at": "2026-07-10T15:02:16.862948+00:00",
+            "ends_at": "2026-07-10T20:02:16.862948+00:00",
+            "is_featured": true,
+            "venue_id": "2ae32a3b-1378-492d-b75f-df76935ccfa8",
+            "venue": {
+              "city": "Kathmandu",
+              "name": "Dasharath Rangasala",
+              "address": "Tripureshwor, Kathmandu",
+              "country": "Nepal"
+            },
+            "tiers": [
+              {
+                "price_paisa": 250000
+              },
+              {
+                "price_paisa": 180000
+              },
+              {
+                "price_paisa": 120000
+              }
+            ]
+          },
+          {
+            "id": "59ecc108-33fd-405a-b751-bfc26f53cf4f",
+            "title": "AI Builders Meetup",
+            "category": "tech",
+            "hero_image_url": "https://picsum.photos/seed/ai-builders-meetup/800/450",
+            "starts_at": "2026-06-12T15:02:16.862948+00:00",
+            "ends_at": "2026-06-12T18:02:16.862948+00:00",
+            "is_featured": false,
+            "venue_id": "270a282b-532f-4116-80bc-75fa4a9d80dd",
+            "venue": {
+              "city": "Kathmandu",
+              "name": "Bhrikutimandap Exhibition Hall",
+              "address": "Bhrikutimandap, Kathmandu",
+              "country": "Nepal"
+            },
+            "tiers": [
+              {
+                "price_paisa": 0
+              }
+            ]
+          },
+          {
+            "id": "fc0def9a-ef8e-4f9b-b989-9ffaeb11d5d7",
+            "title": "Bharatpur Street Food Carnival",
+            "category": "food",
+            "hero_image_url": "https://picsum.photos/seed/bharatpur-street-food/800/450",
+            "starts_at": "2026-06-14T15:02:16.862948+00:00",
+            "ends_at": "2026-06-14T23:02:16.862948+00:00",
+            "is_featured": false,
+            "venue_id": "0c51a24d-98fe-4340-84f7-0bf880cd8320",
+            "venue": {
+              "city": "Bharatpur",
+              "name": "Bharatpur Exhibition Hall",
+              "address": "Bharatpur-10, Chitwan",
+              "country": "Nepal"
+            },
+            "tiers": [
+              {
+                "price_paisa": 0
+              }
+            ]
+          },
+          {
+            "id": "a41f9de4-534d-4a3b-a55b-e2591974c80b",
+            "title": "Thangka Painting Live Workshop",
+            "category": "art",
+            "hero_image_url": "https://picsum.photos/seed/thangka-live-workshop/800/450",
+            "starts_at": "2026-06-17T15:02:16.862948+00:00",
+            "ends_at": "2026-06-17T20:02:16.862948+00:00",
+            "is_featured": false,
+            "venue_id": "19f6e7c2-627a-46f5-9e51-a58ce8002738",
+            "venue": {
+              "city": "Kathmandu",
+              "name": "Boudhanath Stupa Courtyard",
+              "address": "Boudha, Kathmandu",
+              "country": "Nepal"
+            },
+            "tiers": [
+              {
+                "price_paisa": 250000
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "type": "list",
+        "title": "Upcoming Events",
+        "items": [
+          {
+            "id": "2a77863c-9e56-4e7b-a647-d398206dac95",
+            "title": "Newa Art & Mask Exhibition",
+            "category": "art",
+            "hero_image_url": "https://picsum.photos/seed/newa-art-mask-expo/800/450",
+            "starts_at": "2026-06-10T15:02:16.862948+00:00",
+            "ends_at": "2026-06-12T15:02:16.862948+00:00",
+            "is_featured": true,
+            "venue_id": "90097786-989f-4ab2-a140-a2ff9e36f1ed",
+            "venue": {
+              "city": "Bhaktapur",
+              "name": "Bhaktapur Durbar Square",
+              "address": "Bhaktapur",
+              "country": "Nepal"
+            },
+            "tiers": [
+              {
+                "price_paisa": 0
+              }
+            ]
+          },
+          {
+            "id": "59ecc108-33fd-405a-b751-bfc26f53cf4f",
+            "title": "AI Builders Meetup",
+            "category": "tech",
+            "hero_image_url": "https://picsum.photos/seed/ai-builders-meetup/800/450",
+            "starts_at": "2026-06-12T15:02:16.862948+00:00",
+            "ends_at": "2026-06-12T18:02:16.862948+00:00",
+            "is_featured": false,
+            "venue_id": "270a282b-532f-4116-80bc-75fa4a9d80dd",
+            "venue": {
+              "city": "Kathmandu",
+              "name": "Bhrikutimandap Exhibition Hall",
+              "address": "Bhrikutimandap, Kathmandu",
+              "country": "Nepal"
+            },
+            "tiers": [
+              {
+                "price_paisa": 0
+              }
+            ]
+          },
+          {
+            "id": "fc0def9a-ef8e-4f9b-b989-9ffaeb11d5d7",
+            "title": "Bharatpur Street Food Carnival",
+            "category": "food",
+            "hero_image_url": "https://picsum.photos/seed/bharatpur-street-food/800/450",
+            "starts_at": "2026-06-14T15:02:16.862948+00:00",
+            "ends_at": "2026-06-14T23:02:16.862948+00:00",
+            "is_featured": false,
+            "venue_id": "0c51a24d-98fe-4340-84f7-0bf880cd8320",
+            "venue": {
+              "city": "Bharatpur",
+              "name": "Bharatpur Exhibition Hall",
+              "address": "Bharatpur-10, Chitwan",
+              "country": "Nepal"
+            },
+            "tiers": [
+              {
+                "price_paisa": 0
+              }
+            ]
+          },
+          {
+            "id": "283340b5-b717-4b85-a1d3-5a06a4ec3332",
+            "title": "Kathmandu Flutter Conf 2026",
+            "category": "tech",
+            "hero_image_url": "https://picsum.photos/seed/ktm-flutter-conf-2026/800/450",
+            "starts_at": "2026-06-15T15:02:16.862948+00:00",
+            "ends_at": "2026-06-15T23:02:16.862948+00:00",
+            "is_featured": true,
+            "venue_id": "692b3757-a871-4d7b-aea5-23d9da35b373",
+            "venue": {
+              "city": "Lalitpur",
+              "name": "Pulchowk Engineering Campus",
+              "address": "Pulchowk, Lalitpur",
+              "country": "Nepal"
+            },
+            "tiers": [
+              {
+                "price_paisa": 350000
+              },
+              {
+                "price_paisa": 60000
+              },
+              {
+                "price_paisa": 150000
+              }
+            ]
+          },
+          {
+            "id": "a41f9de4-534d-4a3b-a55b-e2591974c80b",
+            "title": "Thangka Painting Live Workshop",
+            "category": "art",
+            "hero_image_url": "https://picsum.photos/seed/thangka-live-workshop/800/450",
+            "starts_at": "2026-06-17T15:02:16.862948+00:00",
+            "ends_at": "2026-06-17T20:02:16.862948+00:00",
+            "is_featured": false,
+            "venue_id": "19f6e7c2-627a-46f5-9e51-a58ce8002738",
+            "venue": {
+              "city": "Kathmandu",
+              "name": "Boudhanath Stupa Courtyard",
+              "address": "Boudha, Kathmandu",
+              "country": "Nepal"
+            },
+            "tiers": [
+              {
+                "price_paisa": 250000
+              }
+            ]
+          },
+          {
+            "id": "a77d467c-ec39-4b3a-9a4c-b79e49d03a0d",
+            "title": "Sajjan Raj Vaidya — Live in Kathmandu",
+            "category": "music",
+            "hero_image_url": "https://picsum.photos/seed/sajjan-raj-vaidya-ktm/800/450",
+            "starts_at": "2026-06-19T15:02:16.862948+00:00",
+            "ends_at": "2026-06-19T19:02:16.862948+00:00",
+            "is_featured": true,
+            "venue_id": "73f530d4-12a5-407b-b7be-9a80188329cd",
+            "venue": {
+              "city": "Kathmandu",
+              "name": "Tundikhel Open Ground",
+              "address": "Tundikhel, Kathmandu",
+              "country": "Nepal"
+            },
+            "tiers": [
+              {
+                "price_paisa": 500000
+              },
+              {
+                "price_paisa": 200000
+              },
+              {
+                "price_paisa": 80000
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  "request_id": "36b89fed56464b86"
+}

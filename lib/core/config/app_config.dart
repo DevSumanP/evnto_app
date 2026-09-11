@@ -73,6 +73,12 @@ class AppConfig {
   static bool get enableLogging =>
       _bool('ENABLE_LOGGING', fallback: kDebugMode);
 
+  /// Master switch for the Server-Driven UI Home screen. When false the app
+  /// renders the legacy fixed Home. Phase A defaults to on; Phase B can flip
+  /// this from a remote config to act as a kill-switch.
+  static bool get sduiHomeEnabled =>
+      _bool('SDUI_HOME_ENABLED', fallback: true);
+
   static String get posthogApiKey =>
       dotenv.get('POSTHOG_API_KEY', fallback: '');
 

@@ -2,6 +2,7 @@ import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:intl/intl.dart';
 import 'package:tap_app/core/constants/image_constants.dart';
 import 'package:tap_app/core/di/core_injection.dart';
@@ -11,7 +12,9 @@ import 'package:tap_app/core/theme/app_text_style.dart';
 import 'package:tap_app/feature/event-detail/domain/entities/event_detail.dart';
 import 'package:tap_app/feature/event-detail/presentation/blocs/event_detail_bloc.dart';
 import 'package:tap_app/feature/favorite/presentation/widgets/favorite_button.dart';
+import 'package:tap_app/shared/widgets/common/avatar_widget.dart';
 import 'package:tap_app/shared/widgets/common/global_calendar.dart';
+import 'package:tap_app/shared/widgets/common/map_location_card.dart';
 import 'package:tap_app/shared/widgets/common/network_image.dart';
 
 const Color _kAccentOrange = Color(0xFFFF8551);
@@ -116,10 +119,83 @@ class _LoadedView extends StatelessWidget {
                 ),
                 const SizedBox(height: 8),
                 _Description(text: detail.description),
+                const SizedBox(height: 24),
+                _Organizer(detail: detail),
+                const SizedBox(height: 24),
+                _Location(detail: detail),
               ],
             ),
           ),
         ),
+      ],
+    );
+  }
+}
+
+// ─── Organizer ─────────────────────────────────────────────────────────────────
+class _Location extends StatelessWidget {
+  const _Location({required this.detail});
+
+  final EventDetail detail;
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      children: [
+        Text(
+          'Location',
+          style: AppTextStyles.bodyBold.copyWith(color: AppColors.text500),
+        ),
+        const SizedBox(height: 12),
+        MapLocationCard(
+          title: detail.venue?.name ?? 'Venue: No given',
+          subtitle: detail.venue?.address ?? 'No address',
+          location: LatLng(27.6939, 85.3417),
+          height: 160,
+          interactive: false,
+          onTap: () => (),
+        ),
+      ],
+    );
+  }
+}
+
+// ─── Organizer ─────────────────────────────────────────────────────────────────
+class _Organizer extends StatelessWidget {
+  const _Organizer({required this.detail});
+
+  final EventDetail detail;
+
+  @override
+  Widget build(final BuildContext context) {
+    final Organizer organizer = detail.organizer;
+
+    return Row(
+      crossAxisAlignment: CrossAxisAlignment.center,
+      children: <Widget>[
+        Avatar(size: 50, url: organizer.logoUrl, initials: organizer.name[0]),
+        const SizedBox(width: 14),
+        Expanded(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: <Widget>[
+              Text(
+                organizer.name,
+                style: AppTextStyles.bodyMedium.copyWith(
+                  color: AppColors.text500,
+                  fontWeight: FontWeight.w700,
+                ),
+              ),
+              const SizedBox(height: 4),
+              Text(
+                organizer.slug,
+                style: AppTextStyles.bodySmallRegular.copyWith(
+                  color: AppColors.text300,
+                ),
+              ),
+            ],
+          ),
+        ),
+        _FollowButton(onTap: () => () {}),
       ],
     );
   }
@@ -378,6 +454,36 @@ class _CalendarButton extends StatelessWidget {
             color: _kAccentOrange,
             height: 22,
             width: 22,
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class _FollowButton extends StatelessWidget {
+  const _FollowButton({required this.onTap});
+
+  final VoidCallback onTap;
+
+  @override
+  Widget build(final BuildContext context) {
+    return InkWell(
+      borderRadius: BorderRadius.circular(12),
+      onTap: onTap,
+      child: Container(
+        decoration: BoxDecoration(
+          border: Border.all(color: _kAccentOrange),
+          borderRadius: BorderRadius.circular(12),
+        ),
+        child: Padding(
+          padding: EdgeInsets.symmetric(vertical: 10, horizontal: 24),
+          child: Text(
+            'Follow',
+            style: AppTextStyles.bodySmall.copyWith(
+              color: AppColors.primary,
+              fontWeight: FontWeight.bold,
+            ),
           ),
         ),
       ),

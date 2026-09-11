@@ -45,17 +45,6 @@ class CustomIconButton extends StatelessWidget {
         decoration: BoxDecoration(
           color: backgroundColor,
           borderRadius: BorderRadius.circular(borderRadius),
-          boxShadow: [
-            BoxShadow(
-              color: AppColors.primarymain.withValues(alpha: 0.04),
-              blurRadius: 2,
-            ),
-            BoxShadow(
-              color: AppColors.primarymain.withValues(alpha: 0.16),
-              blurRadius: 8,
-              offset: const Offset(0, 4),
-            ),
-          ],
         ),
         child: Icon(icon, color: iconColor, size: iconSize),
       ),

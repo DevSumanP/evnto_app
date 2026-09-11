@@ -126,3 +126,4 @@ flutter:
     - .env.production
     - assets/images/
     - assets/icons/
+    - assets/sdui/

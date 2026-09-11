@@ -1,0 +1,76 @@
+{
+  "schemaVersion": 1,
+  "segment": "newcomer",
+  "sections": [
+    {
+      "type": "hero",
+      "title": "👋 Welcome to Evnto",
+      "subtitle": "Discover concerts, meetups and festivals you'll love — near you.",
+      "ctaLabel": "Pick your interests"
+    },
+    {
+      "type": "interest_picker",
+      "title": "What are you into?",
+      "options": ["Music", "Art", "Tech", "Sports", "Food"],
+      "selected": []
+    },
+    {
+      "type": "rail",
+      "title": "Popular Now",
+      "style": "popular",
+      "items": [
+        {
+          "id": "evt-jazz",
+          "title": "Jazz Night Live",
+          "category": "Music",
+          "is_featured": true,
+          "starts_at": "2026-06-14T19:00:00Z",
+          "venue": { "name": "House of Music", "city": "Thamel", "country": "Nepal" },
+          "tiers": [ { "price_paisa": 50000 } ]
+        },
+        {
+          "id": "evt-streetfood",
+          "title": "Street Food Fest",
+          "category": "Food",
+          "is_featured": false,
+          "starts_at": "2026-06-20T16:00:00Z",
+          "venue": { "name": "Patan Durbar", "city": "Patan", "country": "Nepal" },
+          "tiers": [ { "price_paisa": 0 } ]
+        },
+        {
+          "id": "evt-demoday",
+          "title": "Startup Demo Day",
+          "category": "Tech",
+          "is_featured": false,
+          "starts_at": "2026-06-28T18:00:00Z",
+          "venue": { "name": "Lalitpur Hub", "city": "Lalitpur", "country": "Nepal" },
+          "tiers": [ { "price_paisa": 30000 } ]
+        }
+      ]
+    },
+    {
+      "type": "list",
+      "title": "Upcoming Events",
+      "items": [
+        {
+          "id": "evt-techmeetup",
+          "title": "Tech Meetup Kathmandu",
+          "category": "Tech",
+          "is_featured": false,
+          "starts_at": "2026-06-22T17:30:00Z",
+          "venue": { "name": "Lalitpur Hub", "city": "Lalitpur", "country": "Nepal" },
+          "tiers": [ { "price_paisa": 0 } ]
+        },
+        {
+          "id": "evt-rooftop",
+          "title": "Sunset Rooftop Session",
+          "category": "Music",
+          "is_featured": false,
+          "starts_at": "2026-06-25T17:00:00Z",
+          "venue": { "name": "Jhamsikhel Rooftop", "city": "Jhamsikhel", "country": "Nepal" },
+          "tiers": [ { "price_paisa": 80000 } ]
+        }
+      ]
+    }
+  ]
+}

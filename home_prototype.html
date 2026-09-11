@@ -1,0 +1,415 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Evnto · Lifecycle Home Prototype</title>
+<style>
+  :root{
+    --accent:#FF8551;
+    --accent-soft:#FFE5DA;
+    --primary50:#FFF3EE;
+    --primary500:#FF6B35;
+    --text500:#1C1B1F;
+    --text300:#79767D;
+    --text10:#F7F7F8;
+    --white:#FFFFFF;
+    --grey100:#EFEFF1;
+    --grey200:#E2E2E6;
+    --shadow:0 4px 12px rgba(0,0,0,.08);
+    --shadow-lg:0 10px 30px rgba(0,0,0,.14);
+  }
+  *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+  body{
+    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+    background:#2a2d34;
+    color:var(--text500);
+    min-height:100vh;
+    display:flex;flex-direction:column;align-items:center;
+    padding:28px 12px 60px;
+    gap:22px;
+  }
+
+  /* ── Segment toggle ───────────────────────────── */
+  .controls{
+    display:flex;gap:8px;background:#1c1e24;padding:6px;border-radius:999px;
+    box-shadow:inset 0 0 0 1px rgba(255,255,255,.06);
+    position:sticky;top:16px;z-index:50;
+  }
+  .controls button{
+    border:none;cursor:pointer;font-size:13px;font-weight:700;
+    padding:10px 18px;border-radius:999px;color:#b9bbc4;background:transparent;
+    transition:.18s;display:flex;flex-direction:column;align-items:center;gap:2px;line-height:1.1;
+  }
+  .controls button small{font-size:9px;font-weight:600;opacity:.7}
+  .controls button.active{background:var(--accent);color:#fff;box-shadow:0 4px 14px rgba(255,133,81,.45)}
+  .hint{color:#9a9cae;font-size:12px;text-align:center;max-width:380px;line-height:1.5}
+  .hint b{color:#fff}
+
+  /* ── Phone frame ──────────────────────────────── */
+  .phone{
+    width:392px;height:812px;background:var(--text10);
+    border-radius:42px;border:11px solid #0c0d10;
+    box-shadow:var(--shadow-lg);position:relative;overflow:hidden;
+    display:flex;flex-direction:column;
+  }
+  .notch{
+    position:absolute;top:0;left:50%;transform:translateX(-50%);
+    width:150px;height:26px;background:#0c0d10;border-radius:0 0 18px 18px;z-index:30;
+  }
+  .statusbar{
+    height:44px;flex:0 0 auto;display:flex;align-items:center;justify-content:space-between;
+    padding:0 26px;font-size:13px;font-weight:600;color:var(--text500);background:var(--text10);
+  }
+  .scroll{flex:1;overflow-y:auto;overflow-x:hidden;scroll-behavior:smooth}
+  .scroll::-webkit-scrollbar{width:0}
+
+  /* ── Shared header ────────────────────────────── */
+  .topbar{display:flex;align-items:center;gap:10px;padding:14px 20px 8px}
+  .topbar .loc-label{font-size:12px;color:var(--text300)}
+  .topbar .loc-city{font-size:20px;font-weight:800;display:flex;align-items:center;gap:3px}
+  .topbar .compact{font-size:15px;font-weight:800;display:flex;align-items:center;gap:3px}
+  .bell{
+    width:46px;height:46px;border-radius:50%;background:var(--primary50);
+    display:flex;align-items:center;justify-content:center;font-size:20px;position:relative;flex:0 0 auto;
+  }
+  .bell::after{content:"";position:absolute;top:12px;right:12px;width:8px;height:8px;border-radius:50%;background:var(--accent)}
+  .greet{padding:6px 20px 2px}
+  .greet h2{font-size:21px;font-weight:800}
+  .greet p{font-size:13px;color:var(--text300);margin-top:2px}
+
+  .search{margin:8px 20px;display:flex;align-items:center;gap:10px;background:var(--primary50);
+    border-radius:12px;padding:14px 14px;color:var(--text300);font-size:15px}
+
+  /* ── Section header ───────────────────────────── */
+  .sec-head{display:flex;align-items:center;justify-content:space-between;padding:18px 20px 8px}
+  .sec-head h3{font-size:16px;font-weight:800}
+  .sec-head a{font-size:13px;font-weight:700;color:var(--primary500);text-decoration:none}
+
+  /* ── Horizontal rails ─────────────────────────── */
+  .rail{display:flex;gap:12px;overflow-x:auto;padding:2px 20px 4px;scroll-snap-type:x mandatory}
+  .rail::-webkit-scrollbar{height:0}
+
+  /* Popular card (image-top) */
+  .pcard{flex:0 0 232px;background:#fff;border-radius:16px;box-shadow:var(--shadow);padding:8px;scroll-snap-align:start}
+  .pcard .img{height:138px;border-radius:12px;position:relative;overflow:hidden}
+  .pcard .meta{padding:8px 4px 4px}
+  .pcard .date{font-size:11px;color:var(--text300)}
+  .pcard .title{font-size:15px;font-weight:800;margin:3px 0 6px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .pcard .row{display:flex;align-items:center;gap:5px;font-size:13px;color:var(--text300)}
+  .pcard .row .loc{flex:1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+
+  /* Wide list card (image-left) */
+  .wcard{display:flex;gap:12px;background:#fff;border-radius:16px;box-shadow:var(--shadow);padding:8px;margin:0 20px 12px}
+  .wcard.inrail{flex:0 0 320px;margin:0;scroll-snap-align:start}
+  .wcard .img{width:92px;height:92px;border-radius:12px;flex:0 0 auto;position:relative;overflow:hidden}
+  .wcard .body{flex:1;display:flex;flex-direction:column;min-width:0;padding:2px 0}
+  .wcard .title{font-size:15px;font-weight:800;line-height:1.25;margin-bottom:auto}
+  .wcard .foot{display:flex;align-items:center;gap:8px;margin-top:8px}
+  .wcard .loc{flex:1;display:flex;align-items:center;gap:4px;font-size:13px;color:var(--text300);
+    white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+
+  .date-badge{position:absolute;top:6px;left:6px;width:42px;height:42px;background:#fff;border-radius:10px;
+    box-shadow:0 2px 6px rgba(0,0,0,.18);display:flex;flex-direction:column;align-items:center;justify-content:center}
+  .date-badge .d{font-size:16px;font-weight:800;line-height:1}
+  .date-badge .m{font-size:9px;color:var(--text300);text-transform:uppercase}
+
+  .pill{background:var(--accent);color:#fff;font-size:12px;font-weight:800;padding:7px 16px;border-radius:999px;flex:0 0 auto}
+  .chip{background:var(--accent-soft);color:var(--accent);font-size:11px;font-weight:800;padding:4px 10px;border-radius:999px;flex:0 0 auto}
+  .badge-fav{position:absolute;top:8px;right:8px;width:30px;height:30px;border-radius:50%;background:rgba(255,255,255,.92);
+    display:flex;align-items:center;justify-content:center;font-size:15px}
+  .badge-new{position:absolute;top:8px;left:8px;background:var(--primary500);color:#fff;font-size:10px;font-weight:800;
+    padding:3px 8px;border-radius:6px;letter-spacing:.4px}
+  .badge-hot{position:absolute;top:8px;right:8px;background:rgba(0,0,0,.55);color:#fff;font-size:11px;font-weight:700;
+    padding:3px 8px;border-radius:999px}
+
+  /* ── Hero banner (newcomer) ───────────────────── */
+  .hero{margin:12px 20px 2px;border-radius:20px;padding:20px;color:#fff;position:relative;overflow:hidden;
+    background:linear-gradient(135deg,#FF8551,#FF5E7E)}
+  .hero::after{content:"";position:absolute;right:-30px;top:-30px;width:140px;height:140px;border-radius:50%;
+    background:rgba(255,255,255,.14)}
+  .hero h2{font-size:20px;font-weight:800;position:relative}
+  .hero p{font-size:13px;opacity:.95;margin:6px 0 14px;position:relative;max-width:78%}
+  .hero button{border:none;background:#fff;color:var(--primary500);font-weight:800;font-size:13px;
+    padding:11px 18px;border-radius:999px;cursor:pointer;position:relative}
+
+  /* ── Interest chips ───────────────────────────── */
+  .chips{display:flex;gap:8px;overflow-x:auto;padding:4px 20px 2px}
+  .chips::-webkit-scrollbar{height:0}
+  .ichip{flex:0 0 auto;display:flex;align-items:center;gap:6px;border:1px solid var(--grey200);background:#fff;
+    color:var(--text500);font-size:13px;font-weight:600;padding:8px 14px;border-radius:999px;cursor:pointer;transition:.15s}
+  .ichip.on{background:var(--accent);border-color:var(--accent);color:#fff}
+
+  /* ── Next ticket card (regular) ───────────────── */
+  .ticket{margin:12px 20px 2px;background:#13141a;color:#fff;border-radius:20px;padding:16px;display:flex;gap:14px;
+    position:relative;overflow:hidden;box-shadow:var(--shadow-lg)}
+  .ticket::before{content:"";position:absolute;left:96px;top:0;bottom:0;width:1px;border-left:2px dashed rgba(255,255,255,.18)}
+  .ticket .img{width:80px;height:80px;border-radius:14px;flex:0 0 auto}
+  .ticket .info{flex:1;min-width:0}
+  .ticket .tt{font-size:16px;font-weight:800;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .ticket .sub{font-size:12px;color:#b9bbc4;margin-top:4px;display:flex;align-items:center;gap:5px}
+  .ticket .count{display:inline-block;margin-top:8px;background:rgba(255,133,81,.2);color:#FF9d73;font-size:11px;
+    font-weight:800;padding:4px 10px;border-radius:999px}
+  .ticket .qr{margin-top:10px;display:flex;align-items:center;gap:8px;justify-content:space-between}
+  .ticket .qr .status{font-size:11px;color:#7fd99b;font-weight:700}
+  .ticket .qr button{border:none;background:var(--accent);color:#fff;font-weight:800;font-size:12px;
+    padding:9px 14px;border-radius:10px;cursor:pointer}
+
+  .spacer{height:28px}
+
+  /* image gradients */
+  .g1{background:linear-gradient(135deg,#6a5cff,#a86bff)}
+  .g2{background:linear-gradient(135deg,#ff8551,#ffba6b)}
+  .g3{background:linear-gradient(135deg,#1fb6a8,#5cd6c0)}
+  .g4{background:linear-gradient(135deg,#ff5e7e,#ff9eb1)}
+  .g5{background:linear-gradient(135deg,#3a7bd5,#56c4ff)}
+  .g6{background:linear-gradient(135deg,#f7971e,#ffd200)}
+  .g7{background:linear-gradient(135deg,#834d9b,#d04ed6)}
+
+  .screen{display:none}
+  .screen.active{display:block}
+  .tag{font-size:10px;font-weight:800;color:var(--accent);text-transform:uppercase;letter-spacing:.6px;
+    padding:0 20px;margin-top:6px}
+
+  /* bottom nav */
+  .nav{flex:0 0 auto;height:64px;background:#fff;border-top:1px solid var(--grey100);
+    display:flex;align-items:center;justify-content:space-around;padding-bottom:6px}
+  .nav .item{display:flex;flex-direction:column;align-items:center;gap:3px;font-size:10px;color:var(--text300);font-weight:600}
+  .nav .item.on{color:var(--primary500)}
+  .nav .item .ic{font-size:20px}
+</style>
+</head>
+<body>
+
+  <div class="controls">
+    <button data-seg="newcomer" class="active" onclick="show('newcomer',this)">Newcomer<small>0 tickets · 0 saved</small></button>
+    <button data-seg="explorer" onclick="show('explorer',this)">Explorer<small>saved · 1 ticket</small></button>
+    <button data-seg="regular" onclick="show('regular',this)">Regular<small>frequent · 2+ tickets</small></button>
+  </div>
+  <div class="hint" id="hint"></div>
+
+  <div class="phone">
+    <div class="notch"></div>
+    <div class="statusbar"><span>9:41</span><span>📶 &nbsp; 🔋</span></div>
+
+    <div class="scroll">
+
+      <!-- ════════ NEWCOMER ════════ -->
+      <section class="screen active" id="newcomer">
+        <div class="topbar">
+          <div style="flex:1">
+            <div class="loc-label">Find events near</div>
+            <div class="loc-city">Kathmandu, Nepal <span style="font-size:18px">▾</span></div>
+          </div>
+          <div class="bell">🔔</div>
+        </div>
+        <div class="search">🔍 &nbsp; Search all events…</div>
+
+        <div class="tag">Cold start · activate</div>
+        <div class="hero">
+          <h2>👋 Welcome to Evnto</h2>
+          <p>Discover concerts, meetups and festivals you'll love — near you.</p>
+          <button>Pick your interests →</button>
+        </div>
+
+        <div class="sec-head"><h3>What are you into?</h3></div>
+        <div class="chips" id="ichips">
+          <div class="ichip on">⭐ All</div>
+          <div class="ichip">🎨 Art</div>
+          <div class="ichip">🎵 Music</div>
+          <div class="ichip">💻 Tech</div>
+          <div class="ichip">⚽ Sports</div>
+          <div class="ichip">🍔 Food</div>
+        </div>
+
+        <div class="sec-head"><h3>Popular Now</h3><a>See All →</a></div>
+        <div class="rail">
+          <div class="pcard"><div class="img g1"><span class="badge-hot">🔥 Trending</span></div>
+            <div class="meta"><div class="date">Jun 14, 2026 · 7:00 PM</div><div class="title">Jazz Night Live</div>
+            <div class="row"><span>📍</span><span class="loc">Thamel, KTM</span><span class="chip">Rs 500</span></div></div></div>
+          <div class="pcard"><div class="img g2"></div>
+            <div class="meta"><div class="date">Jun 20, 2026 · 4:00 PM</div><div class="title">Street Food Fest</div>
+            <div class="row"><span>📍</span><span class="loc">Patan</span><span class="chip">FREE</span></div></div></div>
+          <div class="pcard"><div class="img g5"></div>
+            <div class="meta"><div class="date">Jun 28, 2026 · 6:00 PM</div><div class="title">Startup Demo Day</div>
+            <div class="row"><span>📍</span><span class="loc">Lalitpur</span><span class="chip">Rs 300</span></div></div></div>
+        </div>
+
+        <div class="sec-head"><h3>This weekend near you</h3><a>See All →</a></div>
+        <div class="wcard"><div class="img g7"><div class="date-badge"><span class="d">14</span><span class="m">Jun</span></div></div>
+          <div class="body"><div class="title">Indie Live @ House of Music</div>
+            <div class="foot"><div class="loc">📍 Thamel</div><span class="pill">Free</span></div></div></div>
+
+        <div class="sec-head"><h3>Upcoming Events</h3><a>See All →</a></div>
+        <div class="wcard"><div class="img g3"><div class="date-badge"><span class="d">22</span><span class="m">Jun</span></div></div>
+          <div class="body"><div class="title">Tech Meetup Kathmandu</div>
+            <div class="foot"><div class="loc">📍 Lalitpur</div><span class="pill">Join</span></div></div></div>
+        <div class="wcard"><div class="img g4"><div class="date-badge"><span class="d">25</span><span class="m">Jun</span></div></div>
+          <div class="body"><div class="title">Sunset Rooftop Session</div>
+            <div class="foot"><div class="loc">📍 Jhamsikhel</div><span class="pill">Join</span></div></div></div>
+        <div class="spacer"></div>
+      </section>
+
+      <!-- ════════ EXPLORER ════════ -->
+      <section class="screen" id="explorer">
+        <div class="topbar">
+          <div style="flex:1">
+            <div class="loc-label">Find events near</div>
+            <div class="loc-city">Kathmandu, Nepal <span style="font-size:18px">▾</span></div>
+          </div>
+          <div class="bell">🔔</div>
+        </div>
+        <div class="search">🔍 &nbsp; Search all events…</div>
+
+        <div class="greet"><h2>Welcome back, Sumar 👋</h2><p>Here's what's happening</p></div>
+
+        <div class="tag">Build the habit · personalized</div>
+        <div class="sec-head"><h3>Picked for you</h3><a>See All →</a></div>
+        <div class="rail">
+          <div class="pcard"><div class="img g1"></div>
+            <div class="meta"><div class="date">Music · Kathmandu</div><div class="title">Acoustic Sessions</div>
+            <div class="row"><span>📍</span><span class="loc">Thamel</span><span class="chip">Rs 700</span></div></div></div>
+          <div class="pcard"><div class="img g5"></div>
+            <div class="meta"><div class="date">Tech · Kathmandu</div><div class="title">Flutter Devs Nepal</div>
+            <div class="row"><span>📍</span><span class="loc">Lalitpur</span><span class="chip">FREE</span></div></div></div>
+          <div class="pcard"><div class="img g7"></div>
+            <div class="meta"><div class="date">Music · Kathmandu</div><div class="title">DJ Night Vol. 4</div>
+            <div class="row"><span>📍</span><span class="loc">Durbarmarg</span><span class="chip">Rs 1200</span></div></div></div>
+        </div>
+
+        <div class="sec-head"><h3>From your saved ♥</h3><a>See All →</a></div>
+        <div class="wcard"><div class="img g4"><div class="date-badge"><span class="d">18</span><span class="m">Jun</span></div>
+            <div class="badge-fav">❤️</div></div>
+          <div class="body"><div class="title">Sunset Rooftop Session</div>
+            <div class="foot"><div class="loc">📍 Jhamsikhel</div><span class="chip">Rs 800</span></div></div></div>
+
+        <div class="sec-head"><h3>This weekend near you</h3><a>See All →</a></div>
+        <div class="rail">
+          <div class="wcard inrail"><div class="img g6"><div class="date-badge"><span class="d">14</span><span class="m">Jun</span></div></div>
+            <div class="body"><div class="title">Food &amp; Craft Market</div>
+              <div class="foot"><div class="loc">📍 Patan</div><span class="pill">Free</span></div></div></div>
+          <div class="wcard inrail"><div class="img g2"><div class="date-badge"><span class="d">15</span><span class="m">Jun</span></div></div>
+            <div class="body"><div class="title">Comedy Open Mic</div>
+              <div class="foot"><div class="loc">📍 Jhamel</div><span class="pill">Rs 300</span></div></div></div>
+        </div>
+
+        <div class="sec-head"><h3>Popular Now</h3><a>See All →</a></div>
+        <div class="rail">
+          <div class="pcard"><div class="img g3"><span class="badge-hot">🔥 Trending</span></div>
+            <div class="meta"><div class="date">Jun 20 · 4:00 PM</div><div class="title">Street Food Fest</div>
+            <div class="row"><span>📍</span><span class="loc">Patan</span><span class="chip">FREE</span></div></div></div>
+          <div class="pcard"><div class="img g1"></div>
+            <div class="meta"><div class="date">Jun 14 · 7:00 PM</div><div class="title">Jazz Night Live</div>
+            <div class="row"><span>📍</span><span class="loc">Thamel</span><span class="chip">Rs 500</span></div></div></div>
+        </div>
+
+        <div class="sec-head"><h3>Suggestion for you</h3><a>See All →</a></div>
+        <div class="wcard"><div class="img g5"><div class="date-badge"><span class="d">28</span><span class="m">Jun</span></div></div>
+          <div class="body"><div class="title">Startup Demo Day</div>
+            <div class="foot"><div class="loc">📍 Lalitpur</div><span class="chip">Rs 300</span></div></div></div>
+        <div class="spacer"></div>
+      </section>
+
+      <!-- ════════ REGULAR ════════ -->
+      <section class="screen" id="regular">
+        <div class="topbar">
+          <div style="flex:1">
+            <div class="compact">Kathmandu <span style="font-size:14px">▾</span>
+              &nbsp;·&nbsp; <span style="color:var(--text300);font-weight:600;font-size:13px">Hi Sumar</span></div>
+          </div>
+          <div class="bell">🔔</div>
+        </div>
+        <div class="search">🔍 &nbsp; Search all events…</div>
+        <div class="chips">
+          <div class="ichip on">⭐ All</div>
+          <div class="ichip">🎵 Music</div>
+          <div class="ichip">💻 Tech</div>
+          <div class="ichip">🎨 Art</div>
+          <div class="ichip">⚽ Sports</div>
+          <div class="ichip">🍔 Food</div>
+        </div>
+
+        <div class="tag">Retain · fast paths</div>
+        <div class="ticket">
+          <div class="img g1"></div>
+          <div class="info">
+            <div class="tt">Jazz Night Live</div>
+            <div class="sub">📍 House of Music, Thamel</div>
+            <div class="sub">🗓 Sat, Jun 14 · 7:00 PM</div>
+            <span class="count">⏱ Starts in 2 days</span>
+            <div class="qr">
+              <span class="status">🎟 Issued</span>
+              <button>View ticket / QR →</button>
+            </div>
+          </div>
+        </div>
+
+        <div class="sec-head"><h3>New since your last visit</h3><a>See All →</a></div>
+        <div class="rail">
+          <div class="pcard"><div class="img g6"><span class="badge-new">NEW</span></div>
+            <div class="meta"><div class="date">Jul 2 · 8:00 PM</div><div class="title">Late Night Techno</div>
+            <div class="row"><span>📍</span><span class="loc">Durbarmarg</span><span class="chip">Rs 1500</span></div></div></div>
+          <div class="pcard"><div class="img g7"><span class="badge-new">NEW</span></div>
+            <div class="meta"><div class="date">Jul 5 · 5:00 PM</div><div class="title">Vinyl &amp; Wine</div>
+            <div class="row"><span>📍</span><span class="loc">Patan</span><span class="chip">Rs 900</span></div></div></div>
+          <div class="pcard"><div class="img g5"><span class="badge-new">NEW</span></div>
+            <div class="meta"><div class="date">Jul 8 · 6:30 PM</div><div class="title">AI Builders Night</div>
+            <div class="row"><span>📍</span><span class="loc">Lalitpur</span><span class="chip">FREE</span></div></div></div>
+        </div>
+
+        <div class="sec-head"><h3>Because you saved Music</h3><a>See All →</a></div>
+        <div class="rail">
+          <div class="pcard"><div class="img g1"></div>
+            <div class="meta"><div class="date">Jun 22 · 7:00 PM</div><div class="title">Soul &amp; Funk Live</div>
+            <div class="row"><span>📍</span><span class="loc">Thamel</span><span class="chip">Rs 600</span></div></div></div>
+          <div class="pcard"><div class="img g4"></div>
+            <div class="meta"><div class="date">Jun 26 · 9:00 PM</div><div class="title">Indie Rock Showcase</div>
+            <div class="row"><span>📍</span><span class="loc">Jhamel</span><span class="chip">Rs 800</span></div></div></div>
+        </div>
+
+        <div class="sec-head"><h3>Popular Now</h3><a>See All →</a></div>
+        <div class="rail">
+          <div class="pcard"><div class="img g3"><span class="badge-hot">🔥</span></div>
+            <div class="meta"><div class="date">Jun 20 · 4:00 PM</div><div class="title">Street Food Fest</div>
+            <div class="row"><span>📍</span><span class="loc">Patan</span><span class="chip">FREE</span></div></div></div>
+          <div class="pcard"><div class="img g2"></div>
+            <div class="meta"><div class="date">Jun 30 · 3:00 PM</div><div class="title">Art Walk Patan</div>
+            <div class="row"><span>📍</span><span class="loc">Patan</span><span class="chip">Rs 200</span></div></div></div>
+        </div>
+        <div class="spacer"></div>
+      </section>
+
+    </div><!-- /scroll -->
+
+    <div class="nav">
+      <div class="item on"><span class="ic">🏠</span>Home</div>
+      <div class="item"><span class="ic">🧭</span>Explore</div>
+      <div class="item"><span class="ic">♡</span>Favorites</div>
+      <div class="item"><span class="ic">🎟</span>Tickets</div>
+      <div class="item"><span class="ic">👤</span>Profile</div>
+    </div>
+  </div>
+
+<script>
+  const hints = {
+    newcomer:"<b>Newcomer</b> — no tickets, no favorites. Goal: <b>activate</b>. Welcome hero + interest chips (cheap taste signal) + Popular (social proof). No empty 'your tickets' rows.",
+    explorer:"<b>Explorer</b> — has saved events or 1 ticket. Goal: <b>build the habit</b>. Personalized greeting, Picked-for-you, From-your-saved, then discovery rails.",
+    regular:"<b>Regular</b> — frequent / 2+ tickets / upcoming ticket. Goal: <b>retain</b>. Denser header + quick filters, Your-next-ticket up top, New-since-last-visit, affinity recs."
+  };
+  function show(seg, btn){
+    document.querySelectorAll('.screen').forEach(s=>s.classList.toggle('active', s.id===seg));
+    document.querySelectorAll('.controls button').forEach(b=>b.classList.toggle('active', b===btn));
+    document.getElementById('hint').innerHTML = hints[seg];
+    document.querySelector('.scroll').scrollTop = 0;
+  }
+  // interest chip interactivity (newcomer)
+  document.querySelectorAll('#ichips .ichip').forEach(c=>{
+    c.addEventListener('click',()=>{
+      document.querySelectorAll('#ichips .ichip').forEach(x=>x.classList.remove('on'));
+      c.classList.add('on');
+    });
+  });
+  document.getElementById('hint').innerHTML = hints.newcomer;
+</script>
+</body>
+</html>

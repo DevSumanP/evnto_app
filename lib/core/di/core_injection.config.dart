@@ -81,11 +81,19 @@ import '../../feature/favorite/presentation/blocs/favorites_cubit.dart'
     as _i1050;
 import '../../feature/favorite/presentation/blocs/favorites_list_cubit.dart'
     as _i973;
+import '../../feature/home/data/datasources/home_layout_remote_data_source.dart'
+    as _i260;
 import '../../feature/home/data/datasources/home_remote_data_source.dart'
     as _i832;
+import '../../feature/home/data/repositories/home_layout_repository_impl.dart'
+    as _i793;
 import '../../feature/home/data/repositories/home_repository_impl.dart'
     as _i746;
+import '../../feature/home/domain/repositories/home_layout_repository.dart'
+    as _i528;
 import '../../feature/home/domain/repositories/home_repository.dart' as _i42;
+import '../../feature/home/domain/usecases/get_home_layout_use_case.dart'
+    as _i322;
 import '../../feature/home/domain/usecases/get_popular_event_use_case.dart'
     as _i806;
 import '../../feature/home/domain/usecases/get_suggested_event_use_case.dart'
@@ -93,6 +101,7 @@ import '../../feature/home/domain/usecases/get_suggested_event_use_case.dart'
 import '../../feature/home/domain/usecases/get_upcoming_event_use_case.dart'
     as _i560;
 import '../../feature/home/presentation/blocs/home_bloc.dart' as _i187;
+import '../../feature/home/presentation/blocs/home_layout_bloc.dart' as _i1039;
 import '../../feature/location/data/datasources/location_device_data_source.dart'
     as _i796;
 import '../../feature/location/data/datasources/location_remote_data_source.dart'
@@ -192,6 +201,9 @@ extension GetItInjectableX on _i174.GetIt {
     gh.lazySingleton<_i796.LocationDeviceDataSource>(
       () => const _i796.LocationDeviceDataSourceImpl(),
     );
+    gh.lazySingleton<_i260.HomeLayoutRemoteDataSource>(
+      () => _i260.RemoteHomeLayoutDataSourceImpl(gh<_i557.ApiClient>()),
+    );
     gh.lazySingleton<_i904.LocationRemoteDataSource>(
       () => _i904.LocationRemoteDataSourceImpl(gh<_i557.ApiClient>()),
     );
@@ -219,6 +231,11 @@ extension GetItInjectableX on _i174.GetIt {
     );
     gh.lazySingleton<_i988.EventDetailRemoteDataSource>(
       () => _i988.EventDetailRemoteDataSourceImpl(gh<_i557.ApiClient>()),
+    );
+    gh.lazySingleton<_i528.HomeLayoutRepository>(
+      () => _i793.HomeLayoutRepositoryImpl(
+        gh<_i260.HomeLayoutRemoteDataSource>(),
+      ),
     );
     gh.lazySingleton<_i827.ExploreRepository>(
       () => _i441.ExploreRepositoryImpl(gh<_i867.ExploreRemoteDataSource>()),
@@ -267,6 +284,9 @@ extension GetItInjectableX on _i174.GetIt {
     );
     gh.lazySingleton<_i97.GetTicketQrUseCase>(
       () => _i97.GetTicketQrUseCase(gh<_i559.TicketRepository>()),
+    );
+    gh.lazySingleton<_i322.GetHomeLayoutUseCase>(
+      () => _i322.GetHomeLayoutUseCase(gh<_i528.HomeLayoutRepository>()),
     );
     gh.lazySingleton<_i768.AppStatusRepository>(
       () =>
@@ -413,6 +433,14 @@ extension GetItInjectableX on _i174.GetIt {
         gh<_i333.SearchEventsUseCase>(),
         gh<_i886.GetNearbyEventsUseCase>(),
         gh<_i407.RecentSearchesStore>(),
+        gh<_i1050.FavoritesCubit>(),
+      ),
+    );
+    gh.factory<_i1039.HomeLayoutBloc>(
+      () => _i1039.HomeLayoutBloc(
+        gh<_i322.GetHomeLayoutUseCase>(),
+        gh<_i75.GetMyTicketsUseCase>(),
+        gh<_i306.StorageService>(),
         gh<_i1050.FavoritesCubit>(),
       ),
     );

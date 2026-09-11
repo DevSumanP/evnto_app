@@ -40,6 +40,7 @@ abstract final class ApiEndpoints {
   static const String eventDetail = ApiConstants.eventDetail;
   static const String eventsNearby = ApiConstants.eventsNearby;
   static const String eventsSearch = ApiConstants.eventsSearch;
+  static const String homeLayout = ApiConstants.homeLayout;
 
   // ===========================================================================
   // Event management (organizer)

@@ -18,43 +18,21 @@ import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/svg.dart';
-import 'package:intl/intl.dart';
 import 'package:tap_app/core/constants/image_constants.dart';
-import 'package:tap_app/core/utils/context_extension.dart';
-import 'package:tap_app/shared/widgets/common/network_image.dart';
+import 'package:tap_app/feature/home/presentation/widgets/sdui/home_search_bar.dart';
 
+import '../../../../core/config/app_config.dart';
 import '../../../../core/di/core_injection.dart';
 import '../../../../core/router/app_router.dart';
+import '../../../../core/services/storage_service.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_text_style.dart';
 import '../../domain/entities/event_entity.dart';
+import '../../domain/entities/home_layout.dart';
 import '../blocs/home_bloc.dart';
-
-const Color _kAccentOrange = Color(0xFFFF8551);
-const Color _kAccentOrangeSoft = Color(0xFFFFE5DA);
-
-/// Returns the best location string we can show for [event].
-/// Preference: City, Country > Venue name > '—'.
-String _locationLabel(final Event event) {
-  final String city = (event.venueCity ?? '').trim();
-  final String country = (event.venueCountry ?? '').trim();
-  if (city.isNotEmpty && country.isNotEmpty) return '$city, $country';
-  if (city.isNotEmpty) return city;
-  final String name = (event.venueName ?? '').trim();
-  if (name.isNotEmpty) return name;
-  return '—';
-}
-
-/// 'FREE' when every tier is 0 paisa, 'From Rs <amount>' when we know the
-/// minimum price, '—' when the event has no tiers yet.
-String _priceLabel(final Event event) {
-  if (event.isFree) return 'FREE';
-  final int? minPaisa = event.minPricePaisa;
-  if (minPaisa == null) return '—';
-  // Paisa → rupees. Cards stay compact; drop the decimals.
-  final int rupees = (minPaisa / 100).round();
-  return 'Rs $rupees';
-}
+import '../blocs/home_layout_bloc.dart';
+import '../widgets/cards/event_cards.dart';
+import '../widgets/sdui/section_registry.dart';
 
 @RoutePage(name: 'HomeTabRoute')
 class HomePage extends StatelessWidget {
@@ -62,9 +40,91 @@ class HomePage extends StatelessWidget {
 
   @override
   Widget build(final BuildContext context) {
+    // Flag off → legacy fixed Home, untouched.
+    if (!AppConfig.sduiHomeEnabled) return const _LegacyHome();
+
+    // Flag on → resolve a server-driven layout. The legacy Home stays as the
+    // fallback when the layout fails or is an unsupported schema version.
+    return BlocProvider<HomeLayoutBloc>(
+      create: (_) =>
+          inject<HomeLayoutBloc>()..add(const HomeLayoutEvent.started()),
+      child: const _SduiOrLegacyHome(),
+    );
+  }
+}
+
+/// The legacy fixed Home, self-contained with its own HomeBloc. Used both when
+/// SDUI is disabled and as the fallback when an SDUI layout can't be rendered.
+class _LegacyHome extends StatelessWidget {
+  const _LegacyHome();
+
+  @override
+  Widget build(final BuildContext context) {
     return BlocProvider<HomeBloc>(
       create: (_) => inject<HomeBloc>()..add(const HomeEvent.started()),
       child: const _HomeView(),
+    );
+  }
+}
+
+/// Chooses between the SDUI layout and the legacy fallback based on the
+/// HomeLayoutBloc state.
+class _SduiOrLegacyHome extends StatelessWidget {
+  const _SduiOrLegacyHome();
+
+  @override
+  Widget build(final BuildContext context) {
+    return BlocBuilder<HomeLayoutBloc, HomeLayoutState>(
+      builder: (final BuildContext context, final HomeLayoutState state) {
+        if (state.isFailure) return const _LegacyHome();
+        if (state.hasLayout) return _SduiHomeView(layout: state.layout!);
+        // idle / loading
+        return const Scaffold(
+          backgroundColor: AppColors.text10,
+          body: Center(
+            child: CircularProgressIndicator(color: AppColors.primary500),
+          ),
+        );
+      },
+    );
+  }
+}
+
+/// Renders a server-driven layout: the shared location header on top, then each
+/// section walked through the component registry.
+class _SduiHomeView extends StatelessWidget {
+  const _SduiHomeView({required this.layout});
+
+  final HomeLayout layout;
+
+  @override
+  Widget build(final BuildContext context) {
+    final StorageService storage = inject<StorageService>();
+
+    return Scaffold(
+      backgroundColor: AppColors.text10,
+      body: SafeArea(
+        child: RefreshIndicator(
+          color: AppColors.primary500,
+          onRefresh: () async => context.read<HomeLayoutBloc>().add(
+            const HomeLayoutEvent.refreshed(),
+          ),
+          child: CustomScrollView(
+            physics: const AlwaysScrollableScrollPhysics(),
+            slivers: <Widget>[
+              SliverToBoxAdapter(
+                child: _TitleBar(
+                  city: storage.getUserCity(),
+                  country: storage.getUserCountry(),
+                ),
+              ),
+              for (final section in layout.sections)
+                SliverToBoxAdapter(child: buildSection(context, section)),
+              const SliverToBoxAdapter(child: SizedBox(height: 24)),
+            ],
+          ),
+        ),
+      ),
     );
   }
 }
@@ -184,82 +244,95 @@ class _TitleBar extends StatelessWidget {
 
   @override
   Widget build(final BuildContext context) {
+    final TextEditingController _searchController = TextEditingController();
     return Padding(
       padding: const EdgeInsets.fromLTRB(20, 12, 20, 8),
-      child: Row(
-        crossAxisAlignment: CrossAxisAlignment.center,
-        children: <Widget>[
-          Expanded(
-            child: InkWell(
-              borderRadius: BorderRadius.circular(8),
-              onTap: () => context.router.push(const ChooseLocationRoute()),
-              child: Padding(
-                padding: const EdgeInsets.symmetric(vertical: 4),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: <Widget>[
-                    Text(
-                      'Find events near',
-                      style: AppTextStyles.captionRegular.copyWith(
-                        color: AppColors.text300,
-                      ),
-                    ),
-                    const SizedBox(height: 4),
-                    Row(
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: <Widget>[
+              Expanded(
+                child: InkWell(
+                  borderRadius: BorderRadius.circular(8),
+                  onTap: () => context.router.push(const ChooseLocationRoute()),
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(vertical: 4),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
                       children: <Widget>[
-                        Flexible(
-                          child: Text(
-                            _displayLocation,
-                            maxLines: 1,
-                            overflow: TextOverflow.ellipsis,
-                            style: AppTextStyles.h4Bold.copyWith(
-                              color: AppColors.text500,
-                              fontSize: 20,
-                            ),
+                        Text(
+                          'Find events near',
+                          style: AppTextStyles.captionRegular.copyWith(
+                            color: AppColors.text300,
                           ),
                         ),
-                        const SizedBox(width: 4),
-                        const Icon(
-                          Icons.keyboard_arrow_down,
-                          color: AppColors.text500,
-                          size: 22,
+                        const SizedBox(height: 4),
+                        Row(
+                          children: <Widget>[
+                            Flexible(
+                              child: Text(
+                                _displayLocation,
+                                maxLines: 1,
+                                overflow: TextOverflow.ellipsis,
+                                style: AppTextStyles.h4Bold.copyWith(
+                                  color: AppColors.text500,
+                                  fontSize: 20,
+                                ),
+                              ),
+                            ),
+                            const SizedBox(width: 4),
+                            const Icon(
+                              Icons.keyboard_arrow_down,
+                              color: AppColors.text500,
+                              size: 22,
+                            ),
+                          ],
                         ),
                       ],
                     ),
-                  ],
-                ),
-              ),
-            ),
-          ),
-          Stack(
-            clipBehavior: Clip.none,
-            children: [
-              Container(
-                height: 46,
-                width: 46,
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(100),
-                  color: AppColors.primary50,
-                ),
-                child: Center(
-                  child: SvgPicture.asset(ImageConstants.notification02),
-                ),
-              ),
-
-              // Notification dot
-              Positioned(
-                top: 13,
-                right: 13,
-                child: Container(
-                  width: 8,
-                  height: 8,
-                  decoration: const BoxDecoration(
-                    color: _kAccentOrange,
-                    shape: BoxShape.circle,
                   ),
                 ),
               ),
+              Stack(
+                clipBehavior: Clip.none,
+                children: [
+                  Container(
+                    height: 46,
+                    width: 46,
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(100),
+                      color: AppColors.primary50,
+                    ),
+                    child: Center(
+                      child: SvgPicture.asset(ImageConstants.notification02),
+                    ),
+                  ),
+
+                  // Notification dot
+                  Positioned(
+                    top: 13,
+                    right: 13,
+                    child: Container(
+                      width: 8,
+                      height: 8,
+                      decoration: const BoxDecoration(
+                        color: AppColors.primary,
+                        shape: BoxShape.circle,
+                      ),
+                    ),
+                  ),
+                ],
+              ),
             ],
+          ),
+          const SizedBox(height: 12),
+          SearchHeader(
+            controller: _searchController,
+            onChanged: (val) {},
+            onSubmitted: (val) {},
+            onClear: () {},
           ),
         ],
       ),
@@ -377,7 +450,7 @@ class _UpcomingHorizontalList extends StatelessWidget {
 
   @override
   Widget build(final BuildContext context) {
-    const double height = 120;
+    const double height = 260;
 
     if (status == SectionStatus.idle || status == SectionStatus.loading) {
       return SizedBox(
@@ -420,10 +493,8 @@ class _UpcomingHorizontalList extends StatelessWidget {
         padding: const EdgeInsets.symmetric(horizontal: 20),
         itemCount: items.length,
         separatorBuilder: (_, __) => const SizedBox(width: 12),
-        itemBuilder: (final BuildContext context, final int index) => SizedBox(
-          width: context.screenWidth - 40,
-          child: _UpcomingCard(event: items[index]),
-        ),
+        itemBuilder: (final BuildContext context, final int index) =>
+            SizedBox(width: 200, child: UpcomingCard(event: items[index])),
       ),
     );
   }
@@ -446,7 +517,7 @@ class _PopularHorizontalList extends StatelessWidget {
 
   @override
   Widget build(final BuildContext context) {
-    const double height = 240;
+    const double height = 260;
 
     if (status == SectionStatus.idle || status == SectionStatus.loading) {
       return SizedBox(
@@ -490,7 +561,7 @@ class _PopularHorizontalList extends StatelessWidget {
         itemCount: items.length,
         separatorBuilder: (_, __) => const SizedBox(width: 12),
         itemBuilder: (final BuildContext context, final int index) =>
-            SizedBox(width: 240, child: _PopularCard(event: items[index])),
+            SizedBox(width: 160, child: PopularCard(event: items[index])),
       ),
     );
   }
@@ -555,467 +626,7 @@ class _SuggestionsSliver extends StatelessWidget {
         itemCount: items.length,
         separatorBuilder: (_, __) => const SizedBox(height: 12),
         itemBuilder: (final BuildContext context, final int index) =>
-            _SuggestionCard(event: items[index]),
-      ),
-    );
-  }
-}
-
-// ─── Upcoming card (image-left, used in Upcoming and Suggestions) ────────────
-
-class _UpcomingCard extends StatelessWidget {
-  const _UpcomingCard({required this.event});
-
-  final Event event;
-
-  @override
-  Widget build(final BuildContext context) {
-    return Material(
-      color: AppColors.white,
-      borderRadius: BorderRadius.circular(16),
-      child: InkWell(
-        borderRadius: BorderRadius.circular(16),
-        onTap: () => context.router.push(EventDetailRoute(eventId: event.id)),
-        child: Ink(
-          decoration: BoxDecoration(
-            color: AppColors.white,
-            borderRadius: BorderRadius.circular(16),
-            boxShadow: const <BoxShadow>[
-              BoxShadow(
-                color: Color(0x14000000),
-                blurRadius: 12,
-                offset: Offset(0, 4),
-              ),
-            ],
-          ),
-          padding: const EdgeInsets.all(8),
-          child: Row(
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: <Widget>[
-              SizedBox(
-                width: 96,
-                height: 96,
-                child: Stack(
-                  fit: StackFit.expand,
-                  children: <Widget>[
-                    ClipRRect(
-                      borderRadius: BorderRadius.circular(12),
-                      child: _CoverImage(url: event.heroImageUrl),
-                    ),
-                    Positioned(
-                      top: 6,
-                      left: 6,
-                      child: _DateBadge(date: event.startsAt, compact: true),
-                    ),
-                  ],
-                ),
-              ),
-              const SizedBox(width: 12),
-              Expanded(
-                child: Padding(
-                  padding: const EdgeInsets.symmetric(vertical: 4),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: <Widget>[
-                      Text(
-                        event.title,
-                        maxLines: 2,
-                        overflow: TextOverflow.ellipsis,
-                        style: AppTextStyles.bodyMedium.copyWith(
-                          color: AppColors.text500,
-                          fontWeight: FontWeight.w700,
-                        ),
-                      ),
-                      const Spacer(),
-                      Row(
-                        crossAxisAlignment: CrossAxisAlignment.center,
-                        children: <Widget>[
-                          Expanded(
-                            child: Row(
-                              children: <Widget>[
-                                SvgPicture.asset(
-                                  ImageConstants.locationFilled,
-                                  height: 14,
-                                  width: 14,
-                                  color: AppColors.text300,
-                                ),
-                                const SizedBox(width: 4),
-                                Flexible(
-                                  child: Text(
-                                    _locationLabel(event),
-                                    maxLines: 1,
-                                    overflow: TextOverflow.ellipsis,
-                                    style: AppTextStyles.bodyRegular.copyWith(
-                                      fontSize: 14,
-                                      color: AppColors.text300,
-                                    ),
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
-                          const SizedBox(width: 8),
-                          _JoinButton(
-                            label: event.isFree ? 'Free' : 'Join',
-                            onPressed: () => context.router.push(
-                              EventDetailRoute(eventId: event.id),
-                            ),
-                          ),
-                        ],
-                      ),
-                    ],
-                  ),
-                ),
-              ),
-            ],
-          ),
-        ),
-      ),
-    );
-  }
-}
-
-// ─── Suggestion card (image-left, used in Suggestion for you) ───────────────
-//
-// Mirrors _UpcomingCard's layout but swaps the "Join" call-to-action for a
-// price-based action: "Free" when every tier is 0 paisa, the actual price
-// otherwise, or "—" when we have no price info yet.
-
-class _SuggestionCard extends StatelessWidget {
-  const _SuggestionCard({required this.event});
-
-  final Event event;
-
-  static const double _height = 110;
-
-  @override
-  Widget build(final BuildContext context) {
-    return SizedBox(
-      height: _height,
-      child: Material(
-        color: AppColors.white,
-        borderRadius: BorderRadius.circular(16),
-        child: InkWell(
-          borderRadius: BorderRadius.circular(16),
-          onTap: () => context.router.push(EventDetailRoute(eventId: event.id)),
-          child: Ink(
-            decoration: BoxDecoration(
-              color: AppColors.white,
-              borderRadius: BorderRadius.circular(16),
-              boxShadow: const <BoxShadow>[
-                BoxShadow(
-                  color: Color(0x14000000),
-                  blurRadius: 12,
-                  offset: Offset(0, 4),
-                ),
-              ],
-            ),
-            padding: const EdgeInsets.all(8),
-            child: Row(
-              crossAxisAlignment: CrossAxisAlignment.stretch,
-              children: <Widget>[
-                SizedBox(
-                  width: 96,
-                  height: 96,
-                  child: Stack(
-                    fit: StackFit.expand,
-                    children: <Widget>[
-                      ClipRRect(
-                        borderRadius: BorderRadius.circular(12),
-                        child: _CoverImage(url: event.heroImageUrl),
-                      ),
-                      Positioned(
-                        top: 6,
-                        left: 6,
-                        child: _DateBadge(date: event.startsAt, compact: true),
-                      ),
-                    ],
-                  ),
-                ),
-                const SizedBox(width: 12),
-                Expanded(
-                  child: Padding(
-                    padding: const EdgeInsets.symmetric(vertical: 4),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: <Widget>[
-                        Text(
-                          event.title,
-                          maxLines: 2,
-                          overflow: TextOverflow.ellipsis,
-                          style: AppTextStyles.bodyMedium.copyWith(
-                            color: AppColors.text500,
-                            fontWeight: FontWeight.w700,
-                          ),
-                        ),
-                        const Spacer(),
-                        Row(
-                          crossAxisAlignment: CrossAxisAlignment.center,
-                          children: <Widget>[
-                            Expanded(
-                              child: Row(
-                                children: <Widget>[
-                                  SvgPicture.asset(
-                                    ImageConstants.locationFilled,
-                                    height: 14,
-                                    width: 14,
-                                    color: AppColors.text300,
-                                  ),
-                                  const SizedBox(width: 4),
-                                  Flexible(
-                                    child: Text(
-                                      _locationLabel(event),
-                                      maxLines: 1,
-                                      overflow: TextOverflow.ellipsis,
-                                      style: AppTextStyles.bodyRegular.copyWith(
-                                        fontSize: 14,
-                                        color: AppColors.text300,
-                                      ),
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ),
-                            const SizedBox(width: 8),
-                            _AccentChip(label: _priceLabel(event)),
-                          ],
-                        ),
-                      ],
-                    ),
-                  ),
-                ),
-              ],
-            ),
-          ),
-        ),
-      ),
-    );
-  }
-}
-
-// ─── Popular card (image-top, used in Popular Now) ───────────────────────────
-
-class _PopularCard extends StatelessWidget {
-  const _PopularCard({required this.event});
-
-  final Event event;
-
-  @override
-  Widget build(final BuildContext context) {
-    final String dateLine =
-        '${DateFormat('MMM d, y').format(event.startsAt)}  ·  ${DateFormat('h:mm a').format(event.startsAt)}';
-
-    return Material(
-      color: AppColors.white,
-      borderRadius: BorderRadius.circular(16),
-      child: InkWell(
-        borderRadius: BorderRadius.circular(16),
-        onTap: () => context.router.push(EventDetailRoute(eventId: event.id)),
-        child: Ink(
-          decoration: BoxDecoration(
-            color: AppColors.white,
-            borderRadius: BorderRadius.circular(16),
-            boxShadow: const <BoxShadow>[
-              BoxShadow(
-                color: Color(0x14000000),
-                blurRadius: 12,
-                offset: Offset(0, 4),
-              ),
-            ],
-          ),
-          padding: const EdgeInsets.all(8),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: <Widget>[
-              SizedBox(
-                height: 140,
-                width: double.infinity,
-                child: Stack(
-                  fit: StackFit.expand,
-                  children: <Widget>[
-                    ClipRRect(
-                      borderRadius: BorderRadius.circular(12),
-                      child: _CoverImage(url: event.heroImageUrl),
-                    ),
-                    if (event.isFeatured)
-                      const Positioned(
-                        top: 8,
-                        right: 8,
-                        child: _AccentChip(label: 'Featured'),
-                      ),
-                  ],
-                ),
-              ),
-              const SizedBox(height: 10),
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 4),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: <Widget>[
-                    Text(
-                      dateLine,
-                      maxLines: 1,
-                      overflow: TextOverflow.ellipsis,
-                      style: AppTextStyles.captionRegular.copyWith(
-                        color: AppColors.text300,
-                      ),
-                    ),
-                    const SizedBox(height: 4),
-                    Text(
-                      event.title,
-                      maxLines: 1,
-                      overflow: TextOverflow.ellipsis,
-                      style: AppTextStyles.bodyMedium.copyWith(
-                        color: AppColors.text500,
-                        fontWeight: FontWeight.w700,
-                      ),
-                    ),
-                    const SizedBox(height: 8),
-                    Row(
-                      crossAxisAlignment: CrossAxisAlignment.center,
-                      children: <Widget>[
-                        const Icon(
-                          Icons.location_on_outlined,
-                          size: 14,
-                          color: AppColors.text300,
-                        ),
-                        const SizedBox(width: 4),
-                        Expanded(
-                          child: Text(
-                            _locationLabel(event),
-                            maxLines: 1,
-                            overflow: TextOverflow.ellipsis,
-                            style: AppTextStyles.bodyRegular.copyWith(
-                              fontSize: 14,
-                              color: AppColors.text300,
-                            ),
-                          ),
-                        ),
-                        _AccentChip(label: _priceLabel(event)),
-                      ],
-                    ),
-                  ],
-                ),
-              ),
-            ],
-          ),
-        ),
-      ),
-    );
-  }
-}
-
-// ─── Reusable sub-widgets ────────────────────────────────────────────────────
-
-class _CoverImage extends StatelessWidget {
-  const _CoverImage({required this.url});
-
-  final String? url;
-
-  @override
-  Widget build(final BuildContext context) {
-    final String? src = url;
-    if (src == null || src.isEmpty) {
-      return const ColoredBox(color: AppColors.grey200);
-    }
-    return AppNetworkImage(
-      src,
-      fit: BoxFit.cover,
-      placeholder: const ColoredBox(color: AppColors.grey100),
-      errorWidget: const ColoredBox(color: AppColors.grey200),
-    );
-  }
-}
-
-class _DateBadge extends StatelessWidget {
-  const _DateBadge({required this.date, this.compact = false});
-
-  final DateTime date;
-  final bool compact;
-
-  @override
-  Widget build(final BuildContext context) {
-    final double size = compact ? 44 : 48;
-    return Container(
-      width: size,
-      height: size,
-      decoration: BoxDecoration(
-        color: AppColors.white,
-        borderRadius: BorderRadius.circular(10),
-        boxShadow: const <BoxShadow>[
-          BoxShadow(
-            blurRadius: 6,
-            offset: Offset(0, 2),
-            color: Color(0x1F000000),
-          ),
-        ],
-      ),
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: <Widget>[
-          Text(
-            DateFormat('dd').format(date),
-            style: AppTextStyles.bodyBold.copyWith(
-              color: AppColors.text500,
-              fontSize: compact ? 16 : 18,
-              height: 1.1,
-            ),
-          ),
-          Text(
-            DateFormat('MMM').format(date),
-            style: AppTextStyles.captionRegular.copyWith(
-              color: AppColors.text300,
-              fontSize: compact ? 10 : 11,
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-}
-
-class _JoinButton extends StatelessWidget {
-  const _JoinButton({required this.onPressed, this.label = 'Join'});
-
-  final VoidCallback onPressed;
-  final String label;
-
-  @override
-  Widget build(final BuildContext context) {
-    return Material(
-      color: _kAccentOrange,
-      borderRadius: BorderRadius.circular(999),
-      child: InkWell(
-        borderRadius: BorderRadius.circular(999),
-        onTap: onPressed,
-        child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 8),
-          child: Text(
-            label,
-            style: AppTextStyles.bodySmallBold.copyWith(color: AppColors.white),
-          ),
-        ),
-      ),
-    );
-  }
-}
-
-class _AccentChip extends StatelessWidget {
-  const _AccentChip({required this.label});
-
-  final String label;
-
-  @override
-  Widget build(final BuildContext context) {
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
-      decoration: BoxDecoration(
-        color: _kAccentOrangeSoft,
-        borderRadius: BorderRadius.circular(999),
-      ),
-      child: Text(
-        label,
-        style: AppTextStyles.captionBold.copyWith(color: _kAccentOrange),
+            SuggestionCard(event: items[index]),
       ),
     );
   }

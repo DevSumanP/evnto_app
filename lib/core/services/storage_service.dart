@@ -40,6 +40,16 @@ class StorageService {
   static const String _keyUserCity = 'user_city';
   static const String _keyUserCountry = 'user_country';
 
+  // ── Home lifecycle counters + interests ──────────────────────────────
+  static const String _keyHomeOpenCount = 'home_open_count';
+  static const String _keyHomeActiveDays = 'home_active_days';
+  static const String _keyHomeLastOpenDay = 'home_last_open_day'; // yyyy-MM-dd
+  static const String _keyHomeLastVisitIso = 'home_last_visit_iso';
+  static const String _keyHomeInterests = 'home_interests';
+
+  int get homeOpenCount => _prefs.getInt(_keyHomeOpenCount) ?? 0;
+  int get homeActiveDays => _prefs.getInt(_keyHomeActiveDays) ?? 0;
+
   // ---------------------------------------------------------------------------
   // Typed accessors.
   //
@@ -220,6 +230,51 @@ class StorageService {
     _keyLanguageCode,
     () => _prefs.setString(_keyLanguageCode, code),
   );
+
+  // ---------------------------------------------------------------------------
+  // Home - Moment of previous Home open. for "New since your last visit".
+  // ---------------------------------------------------------------------------
+
+  DateTime? getHomeLastVisit() {
+    final raw = _prefs.getString(_keyHomeLastVisitIso);
+    return (raw == null || raw.isEmpty) ? null : DateTime.tryParse(raw);
+  }
+
+  List<String> getHomeInterest() =>
+      _prefs.getStringList(_keyHomeInterests) ?? const <String>[];
+
+  Future<void> setHomeInterests(final List<String> categories) => _guardedWrite(
+    _keyHomeInterests,
+    () => _prefs.setStringList(_keyHomeInterests, categories),
+  );
+
+  /// Call once each time Home is opened. Bumps the open counts, bumps
+  /// active-days at most once per calendar day, and recors last-visit.
+  Future<void> recordHomeOpen() async {
+    final now = DateTime.now();
+    final today = '${now.year}-${now.month}-${now.day}';
+    await _guardedWrite(
+      _keyHomeOpenCount,
+      () => _prefs.setInt(_keyHomeOpenCount, homeOpenCount + 1),
+    );
+
+    if (_prefs.getString(_keyHomeLastOpenDay) != today) {
+      await _guardedWrite(
+        _keyHomeActiveDays,
+        () => _prefs.setInt(_keyHomeActiveDays, homeActiveDays + 1),
+      );
+      await _guardedWrite(
+        _keyHomeLastOpenDay,
+        () => _prefs.setString(_keyHomeLastOpenDay, today),
+      );
+    }
+
+    // Save *previous* visit before overwriting (read it first next time).
+    await _guardedWrite(
+      _keyHomeLastVisitIso,
+      () => _prefs.setString(_keyHomeLastVisitIso, now.toIso8601String()),
+    );
+  }
 
   // ---------------------------------------------------------------------------
   // Internals

@@ -69,6 +69,7 @@ abstract final class ApiConstants {
   static const String eventDetail = '/events-get';
   static const String eventsNearby = '/events-nearby';
   static const String eventsSearch = '/events-search';
+  static const String homeLayout = '/home-layout';
 
   // Event management (organizer)
   static const String createEvent = '/events-create';

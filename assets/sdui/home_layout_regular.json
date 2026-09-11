@@ -1,0 +1,104 @@
+{
+  "schemaVersion": 1,
+  "segment": "regular",
+  "sections": [
+    {
+      "type": "next_ticket",
+      "ticketId": "tkt-jazz-001",
+      "status": "issued",
+      "event": {
+        "id": "evt-jazz",
+        "title": "Jazz Night Live",
+        "category": "Music",
+        "is_featured": false,
+        "starts_at": "2026-06-14T19:00:00Z",
+        "venue": { "name": "House of Music", "city": "Thamel", "country": "Nepal" },
+        "tiers": [ { "price_paisa": 50000 } ]
+      }
+    },
+    {
+      "type": "rail",
+      "title": "New since your last visit",
+      "style": "popular",
+      "items": [
+        {
+          "id": "evt-techno",
+          "title": "Late Night Techno",
+          "category": "Music",
+          "is_featured": false,
+          "starts_at": "2026-07-02T20:00:00Z",
+          "venue": { "name": "Durbarmarg Club", "city": "Durbarmarg", "country": "Nepal" },
+          "tiers": [ { "price_paisa": 150000 } ]
+        },
+        {
+          "id": "evt-vinyl",
+          "title": "Vinyl & Wine",
+          "category": "Music",
+          "is_featured": false,
+          "starts_at": "2026-07-05T17:00:00Z",
+          "venue": { "name": "Patan Lounge", "city": "Patan", "country": "Nepal" },
+          "tiers": [ { "price_paisa": 90000 } ]
+        },
+        {
+          "id": "evt-aibuilders",
+          "title": "AI Builders Night",
+          "category": "Tech",
+          "is_featured": false,
+          "starts_at": "2026-07-08T18:30:00Z",
+          "venue": { "name": "Lalitpur Hub", "city": "Lalitpur", "country": "Nepal" },
+          "tiers": [ { "price_paisa": 0 } ]
+        }
+      ]
+    },
+    {
+      "type": "rail",
+      "title": "Because you saved Music",
+      "style": "popular",
+      "items": [
+        {
+          "id": "evt-soulfunk",
+          "title": "Soul & Funk Live",
+          "category": "Music",
+          "is_featured": false,
+          "starts_at": "2026-06-22T19:00:00Z",
+          "venue": { "name": "Thamel Stage", "city": "Thamel", "country": "Nepal" },
+          "tiers": [ { "price_paisa": 60000 } ]
+        },
+        {
+          "id": "evt-indierock",
+          "title": "Indie Rock Showcase",
+          "category": "Music",
+          "is_featured": false,
+          "starts_at": "2026-06-26T21:00:00Z",
+          "venue": { "name": "Jhamel Cafe", "city": "Jhamel", "country": "Nepal" },
+          "tiers": [ { "price_paisa": 80000 } ]
+        }
+      ]
+    },
+    {
+      "type": "rail",
+      "title": "Popular Now",
+      "style": "popular",
+      "items": [
+        {
+          "id": "evt-streetfood",
+          "title": "Street Food Fest",
+          "category": "Food",
+          "is_featured": true,
+          "starts_at": "2026-06-20T16:00:00Z",
+          "venue": { "name": "Patan Durbar", "city": "Patan", "country": "Nepal" },
+          "tiers": [ { "price_paisa": 0 } ]
+        },
+        {
+          "id": "evt-artwalk",
+          "title": "Art Walk Patan",
+          "category": "Art",
+          "is_featured": false,
+          "starts_at": "2026-06-30T15:00:00Z",
+          "venue": { "name": "Patan Museum", "city": "Patan", "country": "Nepal" },
+          "tiers": [ { "price_paisa": 20000 } ]
+        }
+      ]
+    }
+  ]
+}

@@ -248,6 +248,31 @@ abstract final class AppColors {
   static Color? get divider => null;
 
   // ==========================================================================
+  // Airbnb-style design tokens (see design/DESIGN.md)
+  // White canvas, a single Rausch accent, ink text, hairline borders.
+  // ==========================================================================
+
+  static const Color rausch = Color(0xFFFF385C); // single brand accent
+  static const Color rauschActive = Color(0xFFE00B41);
+  static const Color rauschSoft = Color(0xFFFFD1DA);
+  static const Color ink = Color(0xFF222222); // headlines / body (never black)
+  static const Color bodyText = Color(0xFF3F3F3F);
+  static const Color muted = Color(0xFF6A6A6A); // sub-labels, card meta
+  static const Color mutedSoft = Color(0xFF929292);
+  static const Color hairline = Color(0xFFDDDDDD);
+  static const Color hairlineSoft = Color(0xFFEBEBEB);
+  static const Color canvas = Color(0xFFFFFFFF);
+  static const Color surfaceSoft = Color(0xFFF7F7F7);
+  static const Color surfaceStrong = Color(0xFFF2F2F2);
+
+  /// The design system's single shadow tier (floated cards / badges).
+  static const List<BoxShadow> homeShadow = <BoxShadow>[
+    BoxShadow(color: Color(0x05000000), blurRadius: 0, spreadRadius: 1),
+    BoxShadow(color: Color(0x0A000000), blurRadius: 6, offset: Offset(0, 2)),
+    BoxShadow(color: Color(0x1A000000), blurRadius: 8, offset: Offset(0, 4)),
+  ];
+
+  // ==========================================================================
   // Utility Methods
   // ==========================================================================
 
